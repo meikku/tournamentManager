@@ -6,7 +6,7 @@ import java.util.Set;
 public interface Tournament {
 
     void addParticipant(Participant participant) throws TournamentException;
-    List<Participant> previewPreliminaryRanking();
+    List<Participant> computePossiblePreliminaryRanking();
     void start() throws TournamentException;
     void end() throws TournamentException;
     List<Game> getAllGames() throws TournamentException;

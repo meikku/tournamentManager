@@ -22,9 +22,11 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Participant> previewPreliminaryRanking() {
-        this.participants.sort(Comparator.comparingInt(Participant::getSeed));
-        return Collections.unmodifiableList(participants);
+    public List<Participant> computePossiblePreliminaryRanking() {
+        List<Participant> randomizedParticipants = new ArrayList<>(this.participants);
+        Collections.shuffle(randomizedParticipants);
+        randomizedParticipants.sort(Comparator.comparingInt(Participant::getSeed));
+        return Collections.unmodifiableList(randomizedParticipants);
     }
 
     @Override
@@ -39,7 +41,8 @@ public class TournamentImpl implements Tournament {
 
         // Build tournament tree
         TournamentTreeBuilder builder = new TournamentTreeBuilderImpl();
-        this.rounds = builder.buildAllRounds(this.participants);
+        List<Participant> initialRankingParticipants = this.computePossiblePreliminaryRanking();
+        this.rounds = builder.buildAllRounds(initialRankingParticipants);
 
         // Set status
         this.status = Status.INPROGRESS;
