@@ -3,6 +3,14 @@ package tournamentmanager.core.api;
 public interface Participant {
 
     String getName();
-    String getNickName();
 
+    int getSeed();
+
+    boolean isEliminated();
+
+    void setEliminated(boolean value);
+
+    void setSeed(int value);
+
+    void setName(String name);
 }
