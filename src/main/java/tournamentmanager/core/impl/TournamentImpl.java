@@ -8,7 +8,7 @@ public class TournamentImpl implements Tournament {
 
     private final List<Participant> participants = new ArrayList<>();
     private Status status = Status.NOTSTARTED;
-    private List<List<Game>> rounds = new ArrayList<>();
+    private List<List<TournamentNode>> rounds = new ArrayList<>();
 
 
     @Override
@@ -45,7 +45,6 @@ public class TournamentImpl implements Tournament {
         this.rounds = builder.buildAllRounds(initialRankingParticipants);
 
 
-
         // Set status
         this.status = Status.INPROGRESS;
     }
@@ -69,16 +68,29 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getAllGames() {
-        List<Game> allGames = new ArrayList<>();
-        for (List<Game> round : rounds) {
+    public List<TournamentNode> getAllNodes() {
+        List<TournamentNode> allGames = new ArrayList<>();
+        for (List<TournamentNode> round : rounds) {
             allGames.addAll(round);
         }
         return allGames;
     }
 
     @Override
-    public List<List<Game>> getRounds() {
+    public List<Game> getAllGames(){
+        List<Game> allGames = new ArrayList<>();
+        for (List<TournamentNode> round : rounds) {
+            for (TournamentNode node : round) {
+                if (node instanceof Game) {
+                    allGames.add((Game) node);
+                }
+            }
+        }
+        return allGames;
+    }
+
+    @Override
+    public List<List<TournamentNode>> getRounds() {
         return Collections.unmodifiableList(this.rounds);
     }
 
@@ -116,7 +128,7 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getFutureGames(){
+    public List<Game> getFutureGames() {
         List<Game> result = new ArrayList<>();
         for (Game game : this.getAllGames()) {
             if (game.getStatus() == Status.NOTSTARTED) {
@@ -132,16 +144,16 @@ public class TournamentImpl implements Tournament {
             throw new TournamentException("Cannot compute ranking of unfinished tournament.");
         }
         List<Set<Participant>> finalRanking = new ArrayList<>();
-        for (List<Game> round : this.rounds) {
+        for (List<TournamentNode> round : this.rounds) {
             Set<Participant> exaequo = new HashSet<>();
-            for (Game game : round) {
-                if (game.getLoser().isPresent()) {
-                    exaequo.add(game.getLoser().get());
+            for (TournamentNode node : round) {
+                if (node.getLoser().isPresent()) {
+                    exaequo.add(node.getLoser().get());
                 }
             }
             finalRanking.add(exaequo);
         }
-        Set<Participant> winner = Set.of(this.rounds.get(this.rounds.size() - 1).get(0).getWinner().get());
+        Set<Participant> winner = Set.of(this.rounds.get(this.rounds.size() - 1).get(0).getWinner());
         finalRanking.add(winner);
         Collections.reverse(finalRanking);
         return finalRanking;

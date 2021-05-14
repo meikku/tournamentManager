@@ -13,9 +13,11 @@ public interface Tournament {
 
     void end() throws TournamentException;
 
-    List<Game> getAllGames() throws TournamentException;
+    List<TournamentNode> getAllNodes();
 
-    List<List<Game>> getRounds() throws TournamentException;
+    List<Game> getAllGames();
+
+    List<List<TournamentNode>> getRounds();
 
     List<Game> getGamesReadyToStart();
 

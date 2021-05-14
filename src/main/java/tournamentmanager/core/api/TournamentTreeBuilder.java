@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface TournamentTreeBuilder {
 
-    List<List<Game>> buildAllRounds(List<Participant> participants) throws TournamentException;
+    List<List<TournamentNode>> buildAllRounds(List<Participant> rankedParticipants) throws TournamentException;
 
-    List<Game> buildInitialRound(List<Participant> participants) throws TournamentException;
+    List<TournamentNode> buildInitialRound(List<Participant> rankedParticipants) throws TournamentException;
 
-    List<Game> buildNextRound(List<Game> games);
+    List<Game> buildNextRound(List<? extends TournamentNode> games) throws TournamentException;
 
 
 }

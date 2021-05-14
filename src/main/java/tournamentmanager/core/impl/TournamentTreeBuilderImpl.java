@@ -1,9 +1,6 @@
 package tournamentmanager.core.impl;
 
-import tournamentmanager.core.api.Game;
-import tournamentmanager.core.api.Participant;
-import tournamentmanager.core.api.TournamentException;
-import tournamentmanager.core.api.TournamentTreeBuilder;
+import tournamentmanager.core.api.*;
 import tournamentmanager.util.Util;
 
 import java.util.ArrayList;
@@ -13,34 +10,38 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
 
 
     @Override
-    public List<List<Game>> buildAllRounds(List<Participant> rankedParticipants) throws TournamentException {
-        List<List<Game>> rounds = new ArrayList<>();
-        List<Game> nextRound = buildInitialRound(rankedParticipants);
+    public List<List<TournamentNode>> buildAllRounds(List<Participant> rankedParticipants) throws TournamentException {
+        List<List<TournamentNode>> rounds = new ArrayList<>();
+        List<TournamentNode> nextRound = buildInitialRound(rankedParticipants);
         while (!nextRound.isEmpty()) {
             rounds.add(nextRound);
-            nextRound = buildNextRound(nextRound);
+            nextRound.clear();
+            nextRound.addAll(buildNextRound(nextRound));
         }
         return rounds;
     }
 
     @Override
-    public List<Game> buildInitialRound(List<Participant> participants) throws TournamentException {
-        List<Participant> remainingParticipants = new ArrayList<>();
-        remainingParticipants.addAll(participants);
-        List<Game> initialGames = new ArrayList<>();
+    public List<TournamentNode> buildInitialRound(List<Participant> rankedParticipants) throws TournamentException {
+        RankedParticipantsList remainingRankedParticipants = new RankedParticipantsListImpl(rankedParticipants);
+        List<TournamentNode> initialGames = new ArrayList<>();
         try {
-            int amountOfInitialGames = Util.findNextPowerOfTwo(participants.size());
-            for (int i = 0; i < amountOfInitialGames; i++) {
-                Game game = new GameImpl();
-                if (!remainingParticipants.isEmpty()) {
-                    Participant p1 = remainingParticipants.remove(0);
-                    game.addParticipant(p1);
+            int amountOfInitialNodes = Util.findNextPowerOfTwo(rankedParticipants.size());
+            int byes = amountOfInitialNodes - rankedParticipants.size();
+            for (int i = 0; i < amountOfInitialNodes; i++) {
+                TournamentNode node;
+                if (byes > 0) {
+                    Bye bye = new ByeImpl();
+                    bye.setParticipant(remainingRankedParticipants.takeNext());
+                    node = bye;
+                    byes--;
+                } else {
+                    Game game = new GameImpl();
+                    game.addParticipant(remainingRankedParticipants.takeNext());
+                    game.addParticipant(remainingRankedParticipants.takeNext());
+                    node = game;
                 }
-                if (!remainingParticipants.isEmpty()) {
-                    Participant p2 = remainingParticipants.remove(0);
-                    game.addParticipant(p2);
-                }
-                initialGames.add(game);
+                initialGames.add(node);
             }
             return initialGames;
         } catch (Exception e) {
@@ -49,19 +50,24 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
     }
 
     @Override
-    public List<Game> buildNextRound(List<Game> games) {
-        //TODO make sure that automatic wins are registered and propagated
-        List<Game> nextGames = new ArrayList<>();
-        for (int i = 0; i < games.size() - 1; i = i + 2) {
-            Game gameA = games.get(i);
-            Game gameB = games.get(i + 1);
+    public List<Game> buildNextRound(List<? extends TournamentNode> round) throws TournamentException {
+        List<Game> nextRound = new ArrayList<>();
+        for (int i = 0; i < round.size() - 1; i = i + 2) {
+            TournamentNode nodeA = round.get(i);
+            TournamentNode nodeB = round.get(i + 1);
             Game newGame = new GameImpl();
-            newGame.setPreviousGame1(gameA);
-            newGame.setPreviousGame2(gameB);
-            gameA.setFollowingGame(newGame);
-            gameB.setFollowingGame(newGame);
-            nextGames.add(newGame);
+            newGame.setPreviousNode1(nodeA);
+            newGame.setPreviousNode2(nodeB);
+            nodeA.setFollowingGame(newGame);
+            nodeB.setFollowingGame(newGame);
+            if (nodeA instanceof Bye) {
+                newGame.addParticipant(((Bye) nodeA).getParticipant());
+            }
+            if (nodeB instanceof Bye) {
+                newGame.addParticipant(((Bye) nodeB).getParticipant());
+            }
+            nextRound.add(newGame);
         }
-        return nextGames;
+        return nextRound;
     }
 }

@@ -1,9 +1,6 @@
 package tournamentmanager.core.impl;
 
-import tournamentmanager.core.api.Game;
-import tournamentmanager.core.api.Participant;
-import tournamentmanager.core.api.Status;
-import tournamentmanager.core.api.TournamentException;
+import tournamentmanager.core.api.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,11 +9,11 @@ import java.util.Optional;
 
 public class GameImpl implements Game {
 
-    private Map<Participant, Integer> participants = new HashMap<>();
+    private final Map<Participant, Integer> participants = new HashMap<>();
     private Status status = Status.NOTSTARTED;
     private Game followingGame;
-    private Game previousGame1;
-    private Game previousGame2;
+    private TournamentNode previousNode1;
+    private TournamentNode previousNode2;
 
     @Override
     public void addParticipant(Participant participant) throws TournamentException {
@@ -57,27 +54,22 @@ public class GameImpl implements Game {
 
     @Override
     public void finish() throws TournamentException {
-        this.finish(false);
-    }
 
-    @Override
-    public void finish(boolean force) throws TournamentException {
-
-        if (!force && this.status != Status.INPROGRESS) {
+        if (this.status != Status.INPROGRESS) {
             throw new TournamentException("Cannot finish a game that has not started.");
         }
 
         if (this.participants.size() > 1) {
             List<Integer> scores = List.copyOf(this.participants.values());
-            if (scores.get(0) == scores.get(1)) {
+            if (scores.get(0).equals(scores.get(1))) {
                 throw new TournamentException("Cannot set the game to 'finished', the scores are ex-aequo. A winner is required.");
             }
         }
 
         this.status = Status.FINISHED;
 
-        if (this.getWinner().isPresent() && this.followingGame != null) {
-            this.followingGame.addParticipant(this.getWinner().get());
+        if (this.followingGame != null) {
+            this.followingGame.addParticipant(this.getWinner());
         }
         if (this.getLoser().isPresent()) {
             this.getLoser().get().setEliminated(true);
@@ -106,7 +98,7 @@ public class GameImpl implements Game {
 
 
     @Override
-    public Optional<Participant> getWinner() throws TournamentException {
+    public Participant getWinner() throws TournamentException {
         if (this.status != Status.FINISHED) {
             throw new TournamentException("Cannot retrieve winner, the game is not finished.");
         }
@@ -114,11 +106,9 @@ public class GameImpl implements Game {
         Participant p1 = plist.get(0);
         Participant p2 = plist.get(1);
         if (this.participants.get(p1) > this.participants.get(p2)) {
-            return Optional.of(p1);
-        } else if (this.participants.get(p2) > this.participants.get(p1)) {
-            return Optional.of(p2);
+            return p1;
         } else {
-            return Optional.empty();
+            return p2;
         }
     }
 
@@ -151,13 +141,13 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public Optional<Game> getPreviousGame1() {
-        return Optional.ofNullable(this.previousGame1);
+    public Optional<TournamentNode> getPreviousNode1() {
+        return Optional.ofNullable(this.previousNode1);
     }
 
     @Override
-    public Optional<Game> getPreviousGame2() {
-        return Optional.ofNullable(this.previousGame2);
+    public Optional<TournamentNode> getPreviousNode2() {
+        return Optional.ofNullable(this.previousNode2);
     }
 
     @Override
@@ -169,19 +159,19 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public void setPreviousGame1(Game game) {
+    public void setPreviousNode1(TournamentNode game) {
         if (game == null) {
             throw new IllegalArgumentException("A game cannot be null.");
         }
-        this.previousGame1 = game;
+        this.previousNode1 = game;
     }
 
     @Override
-    public void setPreviousGame2(Game game) {
+    public void setPreviousNode2(TournamentNode game) {
         if (game == null) {
             throw new IllegalArgumentException("A game cannot be null.");
         }
-        this.previousGame2 = game;
+        this.previousNode2 = game;
     }
 
 

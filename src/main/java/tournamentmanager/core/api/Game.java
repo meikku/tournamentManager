@@ -3,37 +3,28 @@ package tournamentmanager.core.api;
 import java.util.List;
 import java.util.Optional;
 
-public interface Game {
+public interface Game extends TournamentNode {
 
-    List<Participant> getParticipants();
+    void registerForfeit(Participant participant) throws TournamentException;
 
-    Optional<Participant> getWinner() throws TournamentException;
+    void addPoints(Participant participant, int points) throws TournamentException;
 
-    Optional<Participant> getLoser() throws TournamentException;
+    void setPreviousNode1(TournamentNode game);
 
-    Status getStatus();
-
-    Optional<Game> getFollowingGame();
-
-    Optional<Game> getPreviousGame1();
-
-    Optional<Game> getPreviousGame2();
+    void setPreviousNode2(TournamentNode game);
 
     void addParticipant(Participant participant) throws TournamentException;
 
-    void setFollowingGame(Game game);
+    Optional<TournamentNode> getPreviousNode1();
 
-    void setPreviousGame1(Game game);
-
-    void setPreviousGame2(Game game);
+    Optional<TournamentNode> getPreviousNode2();
 
     void start() throws TournamentException;
 
     void finish() throws TournamentException;
 
-    void finish(boolean force) throws TournamentException;
+    Status getStatus();
 
-    void registerForfeit(Participant participant) throws TournamentException;
+    List<Participant> getParticipants();
 
-    void addPoints(Participant participant, int points) throws TournamentException;
 }
