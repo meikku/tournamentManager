@@ -1,15 +1,17 @@
 package tournamentmanager.core.api;
 
+import java.util.Optional;
+
 public interface Game {
 
-    Participant getParticipant1();
-    Participant getParticipant2();
-    Participant getCurrentWinner() throws TournamentException;
-    Participant getCurrentLoser() throws TournamentException;
+    Optional<Participant> getParticipant1();
+    Optional<Participant> getParticipant2();
+    Optional<Participant> getCurrentWinner();
+    Optional<Participant> getCurrentLoser();
     Status getStatus();
-    Game getFollowingGame();
-    Game getPreviousGame1();
-    Game getPreviousGame2();
+    Optional<Game> getFollowingGame();
+    Optional<Game> getPreviousGame1();
+    Optional<Game> getPreviousGame2();
     void addParticipant(Participant participant) throws TournamentException;
     void setFollowingGame(Game game);
     void setPreviousGame1(Game game);
