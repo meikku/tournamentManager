@@ -6,9 +6,9 @@ import java.util.*;
 
 public class TournamentImpl implements Tournament {
 
-    private List<Participant> participants = new ArrayList();
+    private final List<Participant> participants = new ArrayList<>();
     private Status status = Status.NOTSTARTED;
-    private List<List<Game>> rounds = new ArrayList();
+    private List<List<Game>> rounds = new ArrayList<>();
 
 
     @Override
@@ -67,7 +67,7 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getAllGames() throws TournamentException {
+    public List<Game> getAllGames() {
         List<Game> allGames = new ArrayList<>();
         for (List<Game> round : rounds) {
             allGames.addAll(round);
@@ -76,16 +76,15 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<List<Game>> getRounds() throws TournamentException {
+    public List<List<Game>> getRounds() {
         return Collections.unmodifiableList(this.rounds);
     }
 
     @Override
-    public List<Game> getGamesReadyToStart() throws TournamentException {
+    public List<Game> getGamesReadyToStart() {
         List<Game> result = new ArrayList<>();
         for (Game game : this.getAllGames()) {
-            if (game.getParticipant1() != null && game.getParticipant2() != null
-                    && game.getStatus() == Status.NOTSTARTED) {
+            if (game.getParticipants().size() == 2 && game.getStatus() == Status.NOTSTARTED) {
                 result.add(game);
             }
         }
@@ -93,7 +92,7 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getFinishedGames() throws TournamentException {
+    public List<Game> getFinishedGames() {
         List<Game> result = new ArrayList<>();
         for (Game game : this.getAllGames()) {
             if (game.getStatus() == Status.FINISHED) {
@@ -104,7 +103,7 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getGamesInProgress() throws TournamentException {
+    public List<Game> getGamesInProgress() {
         List<Game> result = new ArrayList<>();
         for (Game game : this.getAllGames()) {
             if (game.getStatus() == Status.INPROGRESS) {
@@ -115,7 +114,7 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getFutureGames() throws TournamentException {
+    public List<Game> getFutureGames(){
         List<Game> result = new ArrayList<>();
         for (Game game : this.getAllGames()) {
             if (game.getStatus() == Status.NOTSTARTED) {
@@ -126,18 +125,23 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Set<Participant>> getFinalRanking() throws TournamentException {
+    public List<Set<Participant>> computeFinalRanking() throws TournamentException {
+        if (this.status != Status.FINISHED) {
+            throw new TournamentException("Cannot compute ranking of unfinished tournament.");
+        }
         List<Set<Participant>> finalRanking = new ArrayList<>();
         for (List<Game> round : this.rounds) {
             Set<Participant> exaequo = new HashSet<>();
             for (Game game : round) {
-                exaequo.add(game.getCurrentLoser());
+                if (game.getCurrentLoser().isPresent()) {
+                    exaequo.add(game.getCurrentLoser().get());
+                }
             }
             finalRanking.add(exaequo);
         }
-        Set<Participant> winner = new HashSet<>();
-        winner.add(this.rounds.get(this.rounds.size() - 1).get(0).getCurrentWinner());
+        Set<Participant> winner = Set.of(this.rounds.get(this.rounds.size() - 1).get(0).getCurrentWinner().get());
         finalRanking.add(winner);
+        Collections.reverse(finalRanking);
         return finalRanking;
     }
 

@@ -1,11 +1,11 @@
 package tournamentmanager.core.api;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface Game {
 
-    Optional<Participant> getParticipant1();
-    Optional<Participant> getParticipant2();
+    List<Participant> getParticipants();
     Optional<Participant> getCurrentWinner();
     Optional<Participant> getCurrentLoser();
     Status getStatus();

@@ -5,45 +5,40 @@ import tournamentmanager.core.api.Participant;
 import tournamentmanager.core.api.Status;
 import tournamentmanager.core.api.TournamentException;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class GameImpl implements Game {
 
-    Participant p1;
-    Participant p2;
-    int p1Points = 0;
-    int p2Points = 0;
-    Status status = Status.NOTSTARTED;
-    Game followingGame;
-    Game previousGame1;
-    Game previousGame2;
+    private Map<Participant, Integer> participants = new HashMap<>();
+    private Status status = Status.NOTSTARTED;
+    private Game followingGame;
+    private Game previousGame1;
+    private Game previousGame2;
 
     @Override
     public void addParticipant(Participant participant) throws TournamentException {
         if (participant == null) {
-            throw new IllegalArgumentException("A participant cannot be null.");
+            throw new IllegalArgumentException("The participant cannot be null.");
         }
-        if (this.p1 == null) {
-            this.p1 = participant;
-        } else if (this.p2 == null) {
-            this.p2 = participant;
-        } else {
+        if (this.participants.size() >= 2) {
             throw new TournamentException("Cannot add participant to game, game already has two participants.");
         }
+        this.participants.put(participant, 0);
     }
 
     @Override
     public void addPoints(Participant participant, int points) throws TournamentException {
         if (participant == null) {
-            throw new IllegalArgumentException("A participant cannot be null.");
+            throw new IllegalArgumentException("The participant cannot be null.");
         }
         if (this.status != Status.INPROGRESS) {
             throw new TournamentException("Cannot change status of a game that is not in progress.");
         }
-        if (participant == p1) {
-            p1Points += points;
-        } else if (participant == p2) {
-            p2Points += points;
+        if (participants.containsKey(participant)) {
+            participants.put(participant, participants.get(participant) + points);
         } else {
             throw new TournamentException("Cannot add points to a participants that is not part of this game.");
         }
@@ -56,13 +51,19 @@ public class GameImpl implements Game {
             throw new IllegalArgumentException("A status cannot be null.");
         }
         if (newStatus == Status.FINISHED) {
-            if (p1Points == p2Points) {
-                throw new TournamentException("Cannot set the game to 'finished', the scores are ex-aequo. A winner is required.");
+            if (this.participants.size() > 1) {
+                List<Integer> scores = List.copyOf(this.participants.values());
+                if (scores.get(0) == scores.get(1)) {
+                    throw new TournamentException("Cannot set the game to 'finished', the scores are ex-aequo. A winner is required.");
+                }
             }
-            if (this.followingGame != null) {
+
+            if (this.followingGame != null && this.getCurrentWinner().isPresent()) {
                 this.followingGame.addParticipant(this.getCurrentWinner().get());
             }
-            this.getCurrentLoser().get().setEliminated(true);
+            if (this.getCurrentLoser().isPresent()) {
+                this.getCurrentLoser().get().setEliminated(true);
+            }
         }
     }
 
@@ -71,10 +72,8 @@ public class GameImpl implements Game {
         if (participant == null) {
             throw new IllegalArgumentException("A participant cannot be null.");
         }
-        if (participant == p1) {
-            p1Points = -1;
-        } else if (participant == p2) {
-            p2Points = -1;
+        if (this.participants.containsKey(participant)) {
+            this.participants.put(participant, -1);
         } else {
             throw new TournamentException("Cannot register forfeit for a participant that is not part of this game.");
         }
@@ -82,20 +81,19 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public Optional<Participant> getParticipant1() {
-        return Optional.ofNullable(p1);
+    public List<Participant> getParticipants() {
+        return List.copyOf(this.participants.keySet());
     }
 
-    @Override
-    public Optional<Participant> getParticipant2() {
-        return Optional.ofNullable(p2);
-    }
 
     @Override
     public Optional<Participant> getCurrentWinner() {
-        if (p1Points > p2Points) {
+        List<Participant> plist = List.copyOf(this.participants.keySet());
+        Participant p1 = plist.get(0);
+        Participant p2 = plist.get(1);
+        if (this.participants.get(p1) > this.participants.get(p2)) {
             return Optional.of(p1);
-        } else if (p2Points > p1Points) {
+        } else if (this.participants.get(p2) > this.participants.get(p1)) {
             return Optional.of(p2);
         } else {
             return Optional.empty();
@@ -104,10 +102,13 @@ public class GameImpl implements Game {
 
     @Override
     public Optional<Participant> getCurrentLoser() {
-        if (p1Points < p2Points) {
-            return Optional.of(p1);
-        } else if (p2Points < p1Points) {
+        List<Participant> plist = List.copyOf(this.participants.keySet());
+        Participant p1 = plist.get(0);
+        Participant p2 = plist.get(1);
+        if (this.participants.get(p1) > this.participants.get(p2)) {
             return Optional.of(p2);
+        } else if (this.participants.get(p2) > this.participants.get(p1)) {
+            return Optional.of(p1);
         } else {
             return Optional.empty();
         }
