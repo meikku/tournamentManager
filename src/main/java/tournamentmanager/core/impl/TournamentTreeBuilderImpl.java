@@ -50,6 +50,7 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
 
     @Override
     public List<Game> buildNextRound(List<Game> games) {
+        //TODO make sure that automatic wins are registered and propagated
         List<Game> nextGames = new ArrayList<>();
         for (int i = 0; i < games.size() - 1; i = i + 2) {
             Game gameA = games.get(i);

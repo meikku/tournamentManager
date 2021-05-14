@@ -44,6 +44,8 @@ public class TournamentImpl implements Tournament {
         List<Participant> initialRankingParticipants = this.computePossiblePreliminaryRanking();
         this.rounds = builder.buildAllRounds(initialRankingParticipants);
 
+
+
         // Set status
         this.status = Status.INPROGRESS;
     }
@@ -133,13 +135,13 @@ public class TournamentImpl implements Tournament {
         for (List<Game> round : this.rounds) {
             Set<Participant> exaequo = new HashSet<>();
             for (Game game : round) {
-                if (game.getCurrentLoser().isPresent()) {
-                    exaequo.add(game.getCurrentLoser().get());
+                if (game.getLoser().isPresent()) {
+                    exaequo.add(game.getLoser().get());
                 }
             }
             finalRanking.add(exaequo);
         }
-        Set<Participant> winner = Set.of(this.rounds.get(this.rounds.size() - 1).get(0).getCurrentWinner().get());
+        Set<Participant> winner = Set.of(this.rounds.get(this.rounds.size() - 1).get(0).getWinner().get());
         finalRanking.add(winner);
         Collections.reverse(finalRanking);
         return finalRanking;

@@ -46,26 +46,45 @@ public class GameImpl implements Game {
 
 
     @Override
-    public void changeStatus(Status newStatus) throws TournamentException {
-        if (newStatus == null) {
-            throw new IllegalArgumentException("A status cannot be null.");
+    public void start() throws TournamentException {
+        if (this.status != Status.NOTSTARTED) {
+            throw new TournamentException("Cannot start a game that has already started.");
+        } else if (this.participants.size() < 2) {
+            throw new TournamentException("Cannot start a game that does not have two participants.");
         }
-        if (newStatus == Status.FINISHED) {
-            if (this.participants.size() > 1) {
-                List<Integer> scores = List.copyOf(this.participants.values());
-                if (scores.get(0) == scores.get(1)) {
-                    throw new TournamentException("Cannot set the game to 'finished', the scores are ex-aequo. A winner is required.");
-                }
-            }
-
-            if (this.followingGame != null && this.getCurrentWinner().isPresent()) {
-                this.followingGame.addParticipant(this.getCurrentWinner().get());
-            }
-            if (this.getCurrentLoser().isPresent()) {
-                this.getCurrentLoser().get().setEliminated(true);
-            }
-        }
+        this.status = Status.INPROGRESS;
     }
+
+    @Override
+    public void finish() throws TournamentException {
+        this.finish(false);
+    }
+
+    @Override
+    public void finish(boolean force) throws TournamentException {
+
+        if (!force && this.status != Status.INPROGRESS) {
+            throw new TournamentException("Cannot finish a game that has not started.");
+        }
+
+        if (this.participants.size() > 1) {
+            List<Integer> scores = List.copyOf(this.participants.values());
+            if (scores.get(0) == scores.get(1)) {
+                throw new TournamentException("Cannot set the game to 'finished', the scores are ex-aequo. A winner is required.");
+            }
+        }
+
+        this.status = Status.FINISHED;
+
+        if (this.getWinner().isPresent() && this.followingGame != null) {
+            this.followingGame.addParticipant(this.getWinner().get());
+        }
+        if (this.getLoser().isPresent()) {
+            this.getLoser().get().setEliminated(true);
+        }
+
+    }
+
 
     @Override
     public void registerForfeit(Participant participant) throws TournamentException {
@@ -87,7 +106,10 @@ public class GameImpl implements Game {
 
 
     @Override
-    public Optional<Participant> getCurrentWinner() {
+    public Optional<Participant> getWinner() throws TournamentException {
+        if (this.status != Status.FINISHED) {
+            throw new TournamentException("Cannot retrieve winner, the game is not finished.");
+        }
         List<Participant> plist = List.copyOf(this.participants.keySet());
         Participant p1 = plist.get(0);
         Participant p2 = plist.get(1);
@@ -101,17 +123,21 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public Optional<Participant> getCurrentLoser() {
+    public Optional<Participant> getLoser() throws TournamentException {
+        if (this.status != Status.FINISHED) {
+            throw new TournamentException("Cannot retrieve loser, the game is not finished.");
+        }
         List<Participant> plist = List.copyOf(this.participants.keySet());
         Participant p1 = plist.get(0);
         Participant p2 = plist.get(1);
-        if (this.participants.get(p1) > this.participants.get(p2)) {
-            return Optional.of(p2);
-        } else if (this.participants.get(p2) > this.participants.get(p1)) {
+        if (this.participants.get(p1) < this.participants.get(p2)) {
             return Optional.of(p1);
+        } else if (this.participants.get(p2) < this.participants.get(p1)) {
+            return Optional.of(p2);
         } else {
             return Optional.empty();
         }
+
     }
 
     @Override
