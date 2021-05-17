@@ -5,13 +5,17 @@ import tournamentmanager.core.api.Participant;
 public class ParticipantImpl implements Participant {
 
     private String name;
-    private int seed;
-    private boolean eliminated;
+    private int seed = 0;
+    private boolean eliminated = false;
 
-    public ParticipantImpl(String name, int seed, boolean eliminated) {
+
+    public ParticipantImpl(String name) {
+        this.name = name;
+    }
+
+    public ParticipantImpl(String name, int seed) {
         this.name = name;
         this.seed = seed;
-        this.eliminated = eliminated;
     }
 
 
@@ -31,8 +35,8 @@ public class ParticipantImpl implements Participant {
     }
 
     @Override
-    public void setEliminated(boolean value) {
-        this.eliminated = value;
+    public void eliminate() {
+        this.eliminated = true;
     }
 
     @Override

@@ -10,9 +10,6 @@ import java.util.Set;
 
 public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
 
-
-
-
     @Override
     public List<List<TournamentNode>> buildAllRounds(List<Set<Participant>> rankedParticipants) throws TournamentException {
         List<List<TournamentNode>> rounds = new ArrayList<>();
@@ -30,56 +27,73 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
 
         // Take the ordered partition of participants, and transform it into a regular list.
         // Each partition is randomized.
-        List<Participant> flattenedList = new ArrayList<>();
+        List<Participant> flattenedRankedList = new ArrayList<>();
         for (Set<Participant> partition : rankedParticipants) {
             List<Participant> randomizedPartition = new ArrayList<>(partition);
             Collections.shuffle(randomizedPartition);
-            flattenedList.addAll(randomizedPartition);
+            flattenedRankedList.addAll(randomizedPartition);
         }
 
-        // Use a RankedParticipantsList to
-        CustomList<Participant> remainingRankedParticipants = new CustomList<Participant>(flattenedList);
-        List<TournamentNode> initialGames = new ArrayList<>();
+        // Use a CustomList to alternatively pick high ranked participants / low ranked participants
+        // CustomList provides a takeNext() operation that alternates between taking an element
+        // from the start and from the end of the list.
+        CustomList<Participant> remainingRankedParticipants = new CustomList<>(flattenedRankedList);
+        List<TournamentNode> initialRound = new ArrayList<>();
         try {
-            int amountOfInitialNodes = Util.findNextPowerOfTwo(rankedParticipants.size());
-            int byes = amountOfInitialNodes - rankedParticipants.size();
+            int tournamentSize = Util.findNextPowerOfTwo(flattenedRankedList.size());
+            int amountOfInitialNodes = tournamentSize / 2;
+            int remainingByes = tournamentSize - flattenedRankedList.size();
             for (int i = 0; i < amountOfInitialNodes; i++) {
                 TournamentNode node;
-                if (byes > 0) {
+                if (remainingByes > 0) {
                     ByeNode bye = new ByeNodeImpl();
                     bye.setParticipant(remainingRankedParticipants.takeNext());
                     node = bye;
-                    byes--;
+                    remainingByes--;
                 } else {
                     GameNode game = new GameNodeImpl();
                     game.addParticipant(remainingRankedParticipants.takeNext());
                     game.addParticipant(remainingRankedParticipants.takeNext());
                     node = game;
                 }
-                initialGames.add(node);
+
+                // Add the new node in the middle of the round, to make sure the best players are
+                // put as apart as possible from each other.
+                initialRound.add((initialRound.size() / 2), node);
             }
-            return initialGames;
+            if (remainingRankedParticipants.size() > 0) {
+                throw new RuntimeException("INTERNAL ERROR: there are participants remaining! This should never happen.");
+            }
+            return initialRound;
         } catch (Exception e) {
             throw new TournamentException("Too many players, cannot start the tournament.");
         }
     }
 
     @Override
-    public List<GameNode> buildNextRound(List<? extends TournamentNode> round) throws TournamentException {
+    public List<GameNode> buildNextRound(List<? extends TournamentNode> previousRound) {
         List<GameNode> nextRound = new ArrayList<>();
-        for (int i = 0; i < round.size() - 1; i = i + 2) {
-            TournamentNode nodeA = round.get(i);
-            TournamentNode nodeB = round.get(i + 1);
+        for (int i = 0; i < previousRound.size() - 1; i = i + 2) {
+            TournamentNode nodeA = previousRound.get(i);
+            TournamentNode nodeB = previousRound.get(i + 1);
             GameNode newGame = new GameNodeImpl();
-            newGame.setPreviousNode1(nodeA);
-            newGame.setPreviousNode2(nodeB);
+            try {
+                newGame.addPreviousNode(nodeA);
+                newGame.addPreviousNode(nodeB);
+            } catch (TournamentException e) {
+                throw new RuntimeException("INTERNAL ERROR: cannot add previous nodes to a new GameNode, should never happen!", e);
+            }
             nodeA.setFollowingGame(newGame);
             nodeB.setFollowingGame(newGame);
-            if (nodeA instanceof ByeNode) {
-                newGame.addParticipant(((ByeNode) nodeA).getParticipant());
-            }
-            if (nodeB instanceof ByeNode) {
-                newGame.addParticipant(((ByeNode) nodeB).getParticipant());
+            try {
+                if (nodeA instanceof ByeNode) {
+                    newGame.addParticipant(((ByeNode) nodeA).getParticipant());
+                }
+                if (nodeB instanceof ByeNode) {
+                    newGame.addParticipant(((ByeNode) nodeB).getParticipant());
+                }
+            } catch (TournamentException e) {
+                throw new RuntimeException("INTERNAL ERROR: cannot add participants to a new GameNode, should never happen!", e);
             }
             nextRound.add(newGame);
         }
