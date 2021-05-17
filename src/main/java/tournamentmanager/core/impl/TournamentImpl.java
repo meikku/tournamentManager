@@ -38,6 +38,7 @@ public class TournamentImpl implements Tournament {
 
         // Build tournament tree
         TournamentTreeBuilder builder = new TournamentTreeBuilderImpl();
+        Collections.shuffle(this.participants);
         this.rounds = builder.buildAllRounds(Collections.unmodifiableList(this.participants));
 
         // Set status
