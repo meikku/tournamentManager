@@ -1,7 +1,6 @@
 package tournamentmanager.core.api;
 
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -27,7 +26,7 @@ public interface TournamentTreeBuilder {
      * @throws TournamentException If the amount of players is so high that the resulting tournament size is
      *                             higher than Integer.MAX_VALUE.
      */
-    List<List<GameNode>> buildAllRounds(List<Participant> participants) throws TournamentException;
+    List<List<Game>> buildAllRounds(List<Participant> participants) throws TournamentException;
 
     /**
      * Build the first round of a tournament tree. This first round is special because it is initially filled with all participants.
@@ -37,7 +36,7 @@ public interface TournamentTreeBuilder {
      * @throws TournamentException If the amount of players is so high that the resulting
      *                             tournament size is higher than Integer.MAX_VALUE.
      */
-    List<GameNode> buildInitialRound(List<Participant> participants) throws TournamentException;
+    List<Game> buildInitialRound(List<Participant> participants) throws TournamentException;
 
     /**
      * Given an already created round, build the next round of a tournament tree.
@@ -47,7 +46,7 @@ public interface TournamentTreeBuilder {
      * @param previousRound The round that precedes this newly created round.
      * @return The round that follows the given previous round.
      */
-    List<GameNode> buildNextRound(List<? extends GameNode> previousRound);
+    List<Game> buildNextRound(List<? extends Game> previousRound);
 
 
 }

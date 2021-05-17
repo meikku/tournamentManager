@@ -12,7 +12,7 @@ import java.util.Optional;
  * Once in progress, points can be given to each player.
  * Once the confrontation is over, the GameNode must be FINISHED.
  */
-public interface GameNode {
+public interface Game {
 
     /**
      * Give or remove points (with a negative value) to one Participant of the GameNode.
@@ -37,11 +37,11 @@ public interface GameNode {
      * Can only be used if the GameNode is NOTSTARTED.
      * Is used to initially construct the Tournament tree.
      *
-     * @param gameNode The node to add as a previous node.
+     * @param game The node to add as a previous node.
      * @throws TournamentException      If there are already two previous nodes, or if the node already part of the previous nodes, or if the game is not NOTSTARTED.
      * @throws IllegalArgumentException If the provided node is null.
      */
-    void addPreviousNode(GameNode gameNode) throws IllegalArgumentException, TournamentException;
+    void addPreviousGame(Game game) throws IllegalArgumentException, TournamentException;
 
     /**
      * Add a Participant to the GameNode.
@@ -68,7 +68,7 @@ public interface GameNode {
      *
      * @return The previous nodes of this GameNode.
      */
-    List<GameNode> getPreviousNodes();
+    List<Game> getPreviousGames();
 
     /**
      * Set the status to FINISHED.
@@ -124,14 +124,14 @@ public interface GameNode {
      * If this node is the final game, then returns an empty Optional.
      * @return The following GameNode where the winner will go.
      */
-    Optional<GameNode> getFollowingGame();
+    Optional<Game> getFollowingGame();
 
     /**
      * Sets the following node to a specific GameNode.
-     * @param gameNode The gameNode to set as following node.
+     * @param game The gameNode to set as following node.
      * @throws IllegalArgumentException If the provided gameNode is null.
      */
-    void setFollowingGame(GameNode gameNode) throws IllegalArgumentException;
+    void setFollowingGame(Game game) throws IllegalArgumentException;
 
 
 }

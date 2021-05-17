@@ -59,13 +59,11 @@ public interface Tournament {
     void end() throws TournamentException;
 
     /**
-     * Retrieve all the nodes of the Tournament tree.
+     * Retrieve all the games of the Tournament tree.
      *
-     * @return All the nodes of the Tournament tree.
+     * @return All the games of the Tournament tree.
      */
-    List<GameNode> getAllNodes();
-
-    List<GameNode> getAllGames();
+    List<Game> getAllGames();
 
     /**
      * Retrieve all rounds of the Tournament. A round is simply a list of tournament nodes that take place in parallel.
@@ -75,7 +73,7 @@ public interface Tournament {
      *
      * @return The list of rounds.
      */
-    List<List<GameNode>> getRounds();
+    List<List<Game>> getRounds();
 
     /**
      * Retrieve all GameNodes of the tournament tree that are ready to start.
@@ -83,28 +81,28 @@ public interface Tournament {
      *
      * @return All GameNodes of the tournament tree that are ready to start.
      */
-    List<GameNode> getGamesReadyToStart();
+    List<Game> getGamesReadyToStart();
 
     /**
      * Retrieve all GameNodes of the tournament tree  that are finished.
      *
      * @returnAll All GameNodes of the tournament tree that are finished.
      */
-    List<GameNode> getFinishedGames();
+    List<Game> getFinishedGames();
 
     /**
      * Retrieve all games of the tournament tree that are in progress.
      *
      * @return All games of the tournament tree that are in progress.
      */
-    List<GameNode> getGamesInProgress();
+    List<Game> getGamesInProgress();
 
     /**
      * Retrieve all games of the tournament tree that are not ready to start and that will be played in the future.
      *
      * @return All future games of the tournament tree.
      */
-    List<GameNode> getFutureGames();
+    List<Game> getFutureGames();
 
     /**
      * Compute the final ranking based on the Tournament results, and return it.

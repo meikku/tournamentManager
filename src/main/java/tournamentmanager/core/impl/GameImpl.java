@@ -4,12 +4,12 @@ import tournamentmanager.core.api.*;
 
 import java.util.*;
 
-public class GameNodeImpl implements GameNode {
+public class GameImpl implements Game {
 
     private final Map<Participant, Integer> participants = new HashMap<>();
     private Status status = Status.NOTSTARTED;
-    private GameNode followingGame;
-    private List<GameNode> previousNodes = new ArrayList<>();
+    private Game followingGame;
+    private List<Game> previousGames = new ArrayList<>();
 
     @Override
     public void addParticipant(Participant participant) throws TournamentException {
@@ -116,17 +116,17 @@ public class GameNodeImpl implements GameNode {
     }
 
     @Override
-    public Optional<GameNode> getFollowingGame() {
+    public Optional<Game> getFollowingGame() {
         return Optional.ofNullable(this.followingGame);
     }
 
     @Override
-    public List<GameNode> getPreviousNodes() {
-        return Collections.unmodifiableList(this.previousNodes);
+    public List<Game> getPreviousGames() {
+        return Collections.unmodifiableList(this.previousGames);
     }
 
     @Override
-    public void setFollowingGame(GameNode game) throws IllegalArgumentException {
+    public void setFollowingGame(Game game) throws IllegalArgumentException {
         if (game == null) {
             throw new IllegalArgumentException("A game cannot be null.");
         }
@@ -134,17 +134,17 @@ public class GameNodeImpl implements GameNode {
     }
 
     @Override
-    public void addPreviousNode(GameNode gameNode) throws TournamentException {
+    public void addPreviousGame(Game game) throws TournamentException {
         if (status != Status.NOTSTARTED) {
-            throw new TournamentException("Cannot modify the previous nodes after the game has started.");
-        } else if (gameNode == null) {
-            throw new IllegalArgumentException("A node cannot be null.");
-        } else if (this.previousNodes.contains(gameNode)) {
-            throw new TournamentException("Cannot add a previous node, already present.");
-        } else if (this.previousNodes.size() >= 2) {
-            throw new TournamentException("Cannot add a previous node, there are already two previous nodes.");
+            throw new TournamentException("Cannot modify the previous games after the game has started.");
+        } else if (game == null) {
+            throw new IllegalArgumentException("A game cannot be null.");
+        } else if (this.previousGames.contains(game)) {
+            throw new TournamentException("Cannot add a previous game, already present.");
+        } else if (this.previousGames.size() >= 2) {
+            throw new TournamentException("Cannot add a previous game, there are already two previous games.");
         }
-        this.previousNodes.add(gameNode);
+        this.previousGames.add(game);
     }
 
 

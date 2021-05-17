@@ -1,6 +1,6 @@
 package tournamentmanager.core.impl;
 
-import tournamentmanager.core.api.GameNode;
+import tournamentmanager.core.api.Game;
 import tournamentmanager.core.api.Participant;
 import tournamentmanager.core.api.TournamentException;
 import tournamentmanager.core.api.TournamentTreeBuilder;
@@ -11,9 +11,9 @@ import java.util.List;
 public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
 
     @Override
-    public List<List<GameNode>> buildAllRounds(List<Participant> rankedParticipants) throws TournamentException {
-        List<List<GameNode>> rounds = new ArrayList<>();
-        List<GameNode> nextRound = buildInitialRound(rankedParticipants);
+    public List<List<Game>> buildAllRounds(List<Participant> rankedParticipants) throws TournamentException {
+        List<List<Game>> rounds = new ArrayList<>();
+        List<Game> nextRound = buildInitialRound(rankedParticipants);
         while (!nextRound.isEmpty()) {
             rounds.add(nextRound);
             nextRound.clear();
@@ -23,20 +23,17 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
     }
 
     @Override
-    public List<GameNode> buildInitialRound(List<Participant> participants) throws TournamentException {
+    public List<Game> buildInitialRound(List<Participant> participants) throws TournamentException {
 
         List<Participant> remainingRankedParticipants = new ArrayList<>(participants);
-        List<GameNode> initialRound = new ArrayList<>();
+        List<Game> initialRound = new ArrayList<>();
         try {
-            int amountOfInitialNodes = participants.size() / 2;
-            for (int i = 0; i < amountOfInitialNodes; i++) {
-                GameNode game = new GameNodeImpl();
+            int amountOfInitialGames = participants.size() / 2;
+            for (int i = 0; i < amountOfInitialGames; i++) {
+                Game game = new GameImpl();
                 game.addParticipant(remainingRankedParticipants.remove(0));
                 game.addParticipant(remainingRankedParticipants.remove(0));
-
-                // Add the new node in the middle of the round, to make sure the best players are
-                // put as apart as possible from each other.
-                initialRound.add((initialRound.size() / 2), game);
+                initialRound.add(game);
             }
             if (remainingRankedParticipants.size() > 0) {
                 throw new RuntimeException("INTERNAL ERROR: there are participants remaining! This should never happen.");
@@ -48,20 +45,20 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
     }
 
     @Override
-    public List<GameNode> buildNextRound(List<? extends GameNode> previousRound) {
-        List<GameNode> nextRound = new ArrayList<>();
+    public List<Game> buildNextRound(List<? extends Game> previousRound) {
+        List<Game> nextRound = new ArrayList<>();
         for (int i = 0; i < previousRound.size() - 1; i = i + 2) {
-            GameNode nodeA = previousRound.get(i);
-            GameNode nodeB = previousRound.get(i + 1);
-            GameNode newGame = new GameNodeImpl();
+            Game gameA = previousRound.get(i);
+            Game gameB = previousRound.get(i + 1);
+            Game newGame = new GameImpl();
             try {
-                newGame.addPreviousNode(nodeA);
-                newGame.addPreviousNode(nodeB);
+                newGame.addPreviousGame(gameA);
+                newGame.addPreviousGame(gameB);
             } catch (TournamentException e) {
-                throw new RuntimeException("INTERNAL ERROR: cannot add previous nodes to a new GameNode, should never happen!", e);
+                throw new RuntimeException("INTERNAL ERROR: failed when adding previous games to a new Game, should never happen!", e);
             }
-            nodeA.setFollowingGame(newGame);
-            nodeB.setFollowingGame(newGame);
+            gameA.setFollowingGame(newGame);
+            gameB.setFollowingGame(newGame);
             nextRound.add(newGame);
         }
         return nextRound;
