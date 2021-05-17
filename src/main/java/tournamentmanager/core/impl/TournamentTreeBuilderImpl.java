@@ -4,7 +4,6 @@ import tournamentmanager.core.api.GameNode;
 import tournamentmanager.core.api.Participant;
 import tournamentmanager.core.api.TournamentException;
 import tournamentmanager.core.api.TournamentTreeBuilder;
-import tournamentmanager.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;

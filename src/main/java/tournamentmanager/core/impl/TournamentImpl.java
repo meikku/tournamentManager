@@ -143,9 +143,8 @@ public class TournamentImpl implements Tournament {
         for (List<GameNode> round : this.rounds) {
             Set<Participant> exaequo = new HashSet<>();
             for (GameNode node : round) {
-                if (node.getLoser().isPresent()) {
-                    exaequo.add(node.getLoser().get());
-                }
+                exaequo.add(node.getLoser());
+
             }
             finalRanking.add(exaequo);
         }

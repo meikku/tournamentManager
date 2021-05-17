@@ -65,9 +65,8 @@ public class GameNodeImpl implements GameNode {
         if (this.followingGame != null) {
             this.followingGame.addParticipant(this.getWinner());
         }
-        if (this.getLoser().isPresent()) {
-            this.getLoser().get().eliminate();
-        }
+        this.getLoser().eliminate();
+
 
     }
 
@@ -94,7 +93,7 @@ public class GameNodeImpl implements GameNode {
     }
 
     @Override
-    public Optional<Participant> getLoser() throws TournamentException {
+    public Participant getLoser() throws TournamentException {
         if (this.status != Status.FINISHED) {
             throw new TournamentException("Cannot retrieve loser, the game is not finished.");
         }
@@ -102,11 +101,11 @@ public class GameNodeImpl implements GameNode {
         Participant p1 = plist.get(0);
         Participant p2 = plist.get(1);
         if (this.participants.get(p1) < this.participants.get(p2)) {
-            return Optional.of(p1);
+            return p1;
         } else if (this.participants.get(p2) < this.participants.get(p1)) {
-            return Optional.of(p2);
+            return p2;
         } else {
-            return Optional.empty();
+            return null; //never happens
         }
 
     }
@@ -135,17 +134,17 @@ public class GameNodeImpl implements GameNode {
     }
 
     @Override
-    public void addPreviousNode(GameNode node) throws TournamentException {
+    public void addPreviousNode(GameNode gameNode) throws TournamentException {
         if (status != Status.NOTSTARTED) {
             throw new TournamentException("Cannot modify the previous nodes after the game has started.");
-        } else if (node == null) {
+        } else if (gameNode == null) {
             throw new IllegalArgumentException("A node cannot be null.");
-        } else if (this.previousNodes.contains(node)) {
+        } else if (this.previousNodes.contains(gameNode)) {
             throw new TournamentException("Cannot add a previous node, already present.");
         } else if (this.previousNodes.size() >= 2) {
             throw new TournamentException("Cannot add a previous node, there are already two previous nodes.");
         }
-        this.previousNodes.add(node);
+        this.previousNodes.add(gameNode);
     }
 
 

@@ -27,7 +27,7 @@ public interface GameNode {
     void addPoints(Participant participant, int points) throws TournamentException, IllegalArgumentException;
 
     /**
-     * Add one previous TournamentNode to this node.
+     * Add one previous GameNode to this node.
      * <p>
      * A previous node is a node from the previous round whose winner will become a participant
      * in this GameNode.
@@ -37,11 +37,11 @@ public interface GameNode {
      * Can only be used if the GameNode is NOTSTARTED.
      * Is used to initially construct the Tournament tree.
      *
-     * @param tournamentNode The node to add as a previous node.
+     * @param gameNode The node to add as a previous node.
      * @throws TournamentException      If there are already two previous nodes, or if the node already part of the previous nodes, or if the game is not NOTSTARTED.
      * @throws IllegalArgumentException If the provided node is null.
      */
-    void addPreviousNode(GameNode tournamentNode) throws IllegalArgumentException, TournamentException;
+    void addPreviousNode(GameNode gameNode) throws IllegalArgumentException, TournamentException;
 
     /**
      * Add a Participant to the GameNode.
@@ -100,30 +100,29 @@ public interface GameNode {
 
 
     /**
-     * Retrieve the winner of the TournamentNode.
+     * Retrieve the winner of the GameNode.
      *
      * Must be called when there is a winner (for instance if a game is finished).
      *
-     * @return The winner of this node.
+     * @return The winner of this game.
      * @throws TournamentException If there is no winner yet.
      */
     Participant getWinner() throws TournamentException;
 
     /**
-     * Retrieve the loser of the TournamentNode, if any.
-     * If there simply is no loser, returns an empty Optional.
+     * Retrieve the loser of the GameNode, if any.
      *
      * Must be called when there is a loser (for instance if a game is finished).
      *
      * @return The loser of this node.
-     * @throws TournamentException If we do not know yet if there is a loser.
+     * @throws TournamentException If there is no loser yet.
      */
-    Optional<Participant> getLoser() throws TournamentException;
+    Participant getLoser() throws TournamentException;
 
     /**
      * Retrieve the following GameNode, which is the GameNode where the winner of this node will go.
      * If this node is the final game, then returns an empty Optional.
-     * @return
+     * @return The following GameNode where the winner will go.
      */
     Optional<GameNode> getFollowingGame();
 
