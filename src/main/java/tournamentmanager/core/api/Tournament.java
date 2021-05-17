@@ -11,20 +11,10 @@ import java.util.Set;
  * Single-elimination means that a Participant is eliminated from the Tournament as soon as he or she lose one game.
  * <p>
  * A Tournament is managed in three phases (based on the values defined in the Status enumeration):
- * - First, participants must be added to the Tournament. A participant may have a seed (see next part), which
- * will influence how the tournament tree is organized.
+ * - First, participants must be added to the Tournament.
  * - Second, the Tournament can be started, which creates the game tree, and make it possible to register results.
  * When a game is over, the participant is automatically sent to the next game.
  * - Third, the Tournament can be ended, and the final ranking can be computed.
- * <p>
- * If the number of players is not a power of 2, then Participants with the highest seeds are automatically
- * given *byes* which allow them to automatically go to the second round.
- * In a round, this is represented by a Bye object, which automatically brings the player to the next Round.
- * See TournamentTreeBuilder for more information.
- * <p>
- * A Tournament can rely on *seeds* assigned to participants to create a more fair competition.
- * If seeds are assigned to participants, a preliminary ranking is computed and used to make sure high-ranked
- * participants will not play against each other too early in the tournament.
  */
 public interface Tournament {
 
@@ -86,7 +76,7 @@ public interface Tournament {
     /**
      * Retrieve all GameNodes of the tournament tree  that are finished.
      *
-     * @returnAll All GameNodes of the tournament tree that are finished.
+     * @return All GameNodes of the tournament tree that are finished.
      */
     List<Game> getFinishedGames();
 
