@@ -1,16 +1,16 @@
 package tournamentmanager.core.impl;
 
-import tournamentmanager.core.api.Bye;
-import tournamentmanager.core.api.Game;
+import tournamentmanager.core.api.ByeNode;
+import tournamentmanager.core.api.GameNode;
 import tournamentmanager.core.api.Participant;
 import tournamentmanager.core.api.TournamentException;
 
 import java.util.Optional;
 
-public class ByeImpl implements Bye {
+public class ByeNodeImpl implements ByeNode {
 
     Participant participant;
-    Game followingGame;
+    GameNode followingGame;
 
     @Override
     public void setParticipant(Participant participant) {
@@ -33,12 +33,12 @@ public class ByeImpl implements Bye {
     }
 
     @Override
-    public Optional<Game> getFollowingGame() {
+    public Optional<GameNode> getFollowingGame() {
         return Optional.ofNullable(followingGame);
     }
 
     @Override
-    public void setFollowingGame(Game game) {
+    public void setFollowingGame(GameNode game) {
         this.followingGame = game;
     }
 

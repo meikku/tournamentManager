@@ -3,7 +3,7 @@ package tournamentmanager.core.api;
 import java.util.List;
 import java.util.Optional;
 
-public interface Game extends TournamentNode {
+public interface GameNode extends TournamentNode {
 
     void registerForfeit(Participant participant) throws TournamentException;
 

@@ -1,6 +1,5 @@
 package tournamentmanager.core.api;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface TournamentNode {
@@ -9,8 +8,8 @@ public interface TournamentNode {
 
     Optional<Participant> getLoser() throws TournamentException;
 
-    Optional<Game> getFollowingGame();
+    Optional<GameNode> getFollowingGame();
 
-    void setFollowingGame(Game game);
+    void setFollowingGame(GameNode game);
 
 }

@@ -3,7 +3,11 @@ package tournamentmanager.core.impl;
 import tournamentmanager.core.api.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+/**
+ * Basic Tournament implementation.
+ */
 public class TournamentImpl implements Tournament {
 
     private final List<Participant> participants = new ArrayList<>();
@@ -22,11 +26,25 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Participant> computePossiblePreliminaryRanking() {
-        List<Participant> randomizedParticipants = new ArrayList<>(this.participants);
-        Collections.shuffle(randomizedParticipants);
-        randomizedParticipants.sort(Comparator.comparingInt(Participant::getSeed));
-        return Collections.unmodifiableList(randomizedParticipants);
+    public List<Set<Participant>> computePreliminaryRanking() {
+
+        // Put all participants in a hashmap to group them by seed
+        Map<Integer, Set<Participant>> groupBy = new HashMap<Integer, Set<Participant>>();
+        for (Participant participant : this.participants) {
+            if (!groupBy.containsKey(participant.getSeed())) {
+                groupBy.put(participant.getSeed(), new HashSet<>());
+            }
+            groupBy.get(participant.getSeed()).add(participant);
+        }
+
+        // Transform the hashmap into a list, and sort the list by seed (higher seeds at the beginning of the list)
+        List<Map.Entry<Integer, Set<Participant>>> entries = new ArrayList(groupBy.entrySet());
+        entries.sort(Comparator.comparingInt((Map.Entry e) -> (Integer) e.getKey()));
+        Collections.reverse(entries);
+
+        // Transform the list of entries into a regular list (ie. remove the seeds)
+        List<Set<Participant>> flattenedEntries = entries.stream().map(e -> e.getValue()).collect(Collectors.toList());
+        return flattenedEntries;
     }
 
     @Override
@@ -41,7 +59,7 @@ public class TournamentImpl implements Tournament {
 
         // Build tournament tree
         TournamentTreeBuilder builder = new TournamentTreeBuilderImpl();
-        List<Participant> initialRankingParticipants = this.computePossiblePreliminaryRanking();
+        List<Set<Participant>> initialRankingParticipants = this.computePreliminaryRanking();
         this.rounds = builder.buildAllRounds(initialRankingParticipants);
 
 
@@ -56,7 +74,7 @@ public class TournamentImpl implements Tournament {
         }
 
         // Check that all games have ended
-        for (Game game : this.getAllGames()) {
+        for (GameNode game : this.getAllGames()) {
             if (game.getStatus() != Status.FINISHED) {
                 throw new TournamentException("Cannot end a tournament that had unfinished games.");
             }
@@ -77,12 +95,12 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getAllGames(){
-        List<Game> allGames = new ArrayList<>();
+    public List<GameNode> getAllGames() {
+        List<GameNode> allGames = new ArrayList<>();
         for (List<TournamentNode> round : rounds) {
             for (TournamentNode node : round) {
-                if (node instanceof Game) {
-                    allGames.add((Game) node);
+                if (node instanceof GameNode) {
+                    allGames.add((GameNode) node);
                 }
             }
         }
@@ -95,9 +113,9 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getGamesReadyToStart() {
-        List<Game> result = new ArrayList<>();
-        for (Game game : this.getAllGames()) {
+    public List<GameNode> getGamesReadyToStart() {
+        List<GameNode> result = new ArrayList<>();
+        for (GameNode game : this.getAllGames()) {
             if (game.getParticipants().size() == 2 && game.getStatus() == Status.NOTSTARTED) {
                 result.add(game);
             }
@@ -106,9 +124,9 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getFinishedGames() {
-        List<Game> result = new ArrayList<>();
-        for (Game game : this.getAllGames()) {
+    public List<GameNode> getFinishedGames() {
+        List<GameNode> result = new ArrayList<>();
+        for (GameNode game : this.getAllGames()) {
             if (game.getStatus() == Status.FINISHED) {
                 result.add(game);
             }
@@ -117,9 +135,9 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getGamesInProgress() {
-        List<Game> result = new ArrayList<>();
-        for (Game game : this.getAllGames()) {
+    public List<GameNode> getGamesInProgress() {
+        List<GameNode> result = new ArrayList<>();
+        for (GameNode game : this.getAllGames()) {
             if (game.getStatus() == Status.INPROGRESS) {
                 result.add(game);
             }
@@ -128,9 +146,9 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<Game> getFutureGames() {
-        List<Game> result = new ArrayList<>();
-        for (Game game : this.getAllGames()) {
+    public List<GameNode> getFutureGames() {
+        List<GameNode> result = new ArrayList<>();
+        for (GameNode game : this.getAllGames()) {
             if (game.getStatus() == Status.NOTSTARTED) {
                 result.add(game);
             }

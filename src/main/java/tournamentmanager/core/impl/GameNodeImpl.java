@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class GameImpl implements Game {
+public class GameNodeImpl implements GameNode {
 
     private final Map<Participant, Integer> participants = new HashMap<>();
     private Status status = Status.NOTSTARTED;
-    private Game followingGame;
+    private GameNode followingGame;
     private TournamentNode previousNode1;
     private TournamentNode previousNode2;
 
@@ -136,7 +136,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public Optional<Game> getFollowingGame() {
+    public Optional<GameNode> getFollowingGame() {
         return Optional.ofNullable(this.followingGame);
     }
 
@@ -151,7 +151,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public void setFollowingGame(Game game) {
+    public void setFollowingGame(GameNode game) {
         if (game == null) {
             throw new IllegalArgumentException("A game cannot be null.");
         }
