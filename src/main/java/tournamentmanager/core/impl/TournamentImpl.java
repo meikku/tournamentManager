@@ -1,6 +1,7 @@
 package tournamentmanager.core.impl;
 
 import tournamentmanager.core.api.*;
+import tournamentmanager.util.Util;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,7 +13,7 @@ public class TournamentImpl implements Tournament {
 
     private final List<Participant> participants = new ArrayList<>();
     private Status status = Status.NOTSTARTED;
-    private List<List<TournamentNode>> rounds = new ArrayList<>();
+    private List<List<GameNode>> rounds = new ArrayList<>();
 
 
     @Override
@@ -25,43 +26,20 @@ public class TournamentImpl implements Tournament {
         }
     }
 
-    @Override
-    public List<Set<Participant>> computePreliminaryRanking() {
-
-        // Put all participants in a hashmap to group them by seed
-        Map<Integer, Set<Participant>> groupBy = new HashMap<Integer, Set<Participant>>();
-        for (Participant participant : this.participants) {
-            if (!groupBy.containsKey(participant.getSeed())) {
-                groupBy.put(participant.getSeed(), new HashSet<>());
-            }
-            groupBy.get(participant.getSeed()).add(participant);
-        }
-
-        // Transform the hashmap into a list, and sort the list by seed (higher seeds at the beginning of the list)
-        List<Map.Entry<Integer, Set<Participant>>> entries = new ArrayList(groupBy.entrySet());
-        entries.sort(Comparator.comparingInt((Map.Entry e) -> (Integer) e.getKey()));
-        Collections.reverse(entries);
-
-        // Transform the list of entries into a regular list (ie. remove the seeds)
-        List<Set<Participant>> flattenedEntries = entries.stream().map(e -> e.getValue()).collect(Collectors.toList());
-        return flattenedEntries;
-    }
 
     @Override
     public void start() throws TournamentException {
         if (this.getStatus() != Status.NOTSTARTED) {
             throw new TournamentException("Cannot start a tournament that has already started.");
-        }
-
-        if (this.participants.size() < 2) {
+        } else if (this.participants.size() < 2) {
             throw new TournamentException("A tournament requires at least two participants.");
+        } else if (!Util.isPowerOfTwo(this.participants.size())) {
+            throw new TournamentException("A tournament requires a number of participants equal to a power of two.");
         }
 
         // Build tournament tree
         TournamentTreeBuilder builder = new TournamentTreeBuilderImpl();
-        List<Set<Participant>> initialRankingParticipants = this.computePreliminaryRanking();
-        this.rounds = builder.buildAllRounds(initialRankingParticipants);
-
+        this.rounds = builder.buildAllRounds(Collections.unmodifiableList(this.participants));
 
         // Set status
         this.status = Status.INPROGRESS;
@@ -86,9 +64,9 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<TournamentNode> getAllNodes() {
-        List<TournamentNode> allGames = new ArrayList<>();
-        for (List<TournamentNode> round : rounds) {
+    public List<GameNode> getAllNodes() {
+        List<GameNode> allGames = new ArrayList<>();
+        for (List<GameNode> round : rounds) {
             allGames.addAll(round);
         }
         return allGames;
@@ -97,8 +75,8 @@ public class TournamentImpl implements Tournament {
     @Override
     public List<GameNode> getAllGames() {
         List<GameNode> allGames = new ArrayList<>();
-        for (List<TournamentNode> round : rounds) {
-            for (TournamentNode node : round) {
+        for (List<GameNode> round : rounds) {
+            for (GameNode node : round) {
                 if (node instanceof GameNode) {
                     allGames.add((GameNode) node);
                 }
@@ -108,7 +86,7 @@ public class TournamentImpl implements Tournament {
     }
 
     @Override
-    public List<List<TournamentNode>> getRounds() {
+    public List<List<GameNode>> getRounds() {
         return Collections.unmodifiableList(this.rounds);
     }
 
@@ -162,9 +140,9 @@ public class TournamentImpl implements Tournament {
             throw new TournamentException("Cannot compute ranking of unfinished tournament.");
         }
         List<Set<Participant>> finalRanking = new ArrayList<>();
-        for (List<TournamentNode> round : this.rounds) {
+        for (List<GameNode> round : this.rounds) {
             Set<Participant> exaequo = new HashSet<>();
-            for (TournamentNode node : round) {
+            for (GameNode node : round) {
                 if (node.getLoser().isPresent()) {
                     exaequo.add(node.getLoser().get());
                 }

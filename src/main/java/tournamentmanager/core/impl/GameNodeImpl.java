@@ -9,7 +9,7 @@ public class GameNodeImpl implements GameNode {
     private final Map<Participant, Integer> participants = new HashMap<>();
     private Status status = Status.NOTSTARTED;
     private GameNode followingGame;
-    private List<TournamentNode> previousNodes = new ArrayList<>();
+    private List<GameNode> previousNodes = new ArrayList<>();
 
     @Override
     public void addParticipant(Participant participant) throws TournamentException {
@@ -122,7 +122,7 @@ public class GameNodeImpl implements GameNode {
     }
 
     @Override
-    public List<TournamentNode> getPreviousNodes() {
+    public List<GameNode> getPreviousNodes() {
         return Collections.unmodifiableList(this.previousNodes);
     }
 
@@ -135,7 +135,7 @@ public class GameNodeImpl implements GameNode {
     }
 
     @Override
-    public void addPreviousNode(TournamentNode node) throws TournamentException {
+    public void addPreviousNode(GameNode node) throws TournamentException {
         if (status != Status.NOTSTARTED) {
             throw new TournamentException("Cannot modify the previous nodes after the game has started.");
         } else if (node == null) {

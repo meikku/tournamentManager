@@ -63,7 +63,7 @@ public interface Tournament {
      *
      * @return All the nodes of the Tournament tree.
      */
-    List<TournamentNode> getAllNodes();
+    List<GameNode> getAllNodes();
 
     List<GameNode> getAllGames();
 
@@ -75,7 +75,7 @@ public interface Tournament {
      *
      * @return The list of rounds.
      */
-    List<List<TournamentNode>> getRounds();
+    List<List<GameNode>> getRounds();
 
     /**
      * Retrieve all GameNodes of the tournament tree that are ready to start.
@@ -105,23 +105,6 @@ public interface Tournament {
      * @return All future games of the tournament tree.
      */
     List<GameNode> getFutureGames();
-
-    /**
-     * Compute a preliminary ranking based on seeds, and return it.
-     * Can be used to preview the current list of players ranked by seed,
-     * or can be used to build the actual Tournament tree.
-     * <p>
-     * The computed ranking is provided as an *ordered partition*, which is essentially
-     * a list of sets. Each set contains one of several Participants that are ex-æquo.
-     * The list of set gives the ranking among sets of Participants.
-     * <p>
-     * Two participants are ex-æquo if their seeds are equal, or if neither has a seed.
-     * <p>
-     * Can only be called before the Tournament has started.
-     *
-     * @return The preliminary ranking based on seeds.
-     */
-    List<Set<Participant>> computePreliminaryRanking();
 
     /**
      * Compute the final ranking based on the Tournament results, and return it.

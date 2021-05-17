@@ -35,11 +35,11 @@ public interface TournamentTreeBuilder {
      * See buildInitialRound() regarding how the first round is built, and
      * buildNextRound() regarding how all other round is built.
      *
-     * @param rankedParticipants
+     * @param participants
      * @return
      * @throws TournamentException
      */
-    List<List<TournamentNode>> buildAllRounds(List<Set<Participant>> rankedParticipants) throws TournamentException;
+    List<List<GameNode>> buildAllRounds(List<Participant> participants) throws TournamentException;
 
     /**
      * Build the first round of a tournament tree. This first round is special because it is initially filled with all participants.
@@ -67,12 +67,12 @@ public interface TournamentTreeBuilder {
      * (eg. if there are 9 participants, the size of the tournament, must be 16, and 7
      * ByeNodes must be created in the initial round).
      *
-     * @param rankedParticipants The ordered partition with all participants.
+     * @param participants The ordered partition with all participants.
      * @return The initial round of the tournament tree.
      * @throws TournamentException If the amount of players is so high that the resulting
      * tournament size is higher than Integer.MAX_VALUE.
      */
-    List<TournamentNode> buildInitialRound(List<Set<Participant>> rankedParticipants) throws TournamentException;
+    List<GameNode> buildInitialRound(List<Participant> participants) throws TournamentException;
 
     /**
      * Given an already created round, build the next round of a tournament tree.
@@ -84,7 +84,7 @@ public interface TournamentTreeBuilder {
      * @param previousRound The round that precedes this newly created round.
      * @return The round that follows the given previous round.
      */
-    List<GameNode> buildNextRound(List<? extends TournamentNode> previousRound);
+    List<GameNode> buildNextRound(List<? extends GameNode> previousRound);
 
 
 }

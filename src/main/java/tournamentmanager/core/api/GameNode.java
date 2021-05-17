@@ -1,10 +1,10 @@
 package tournamentmanager.core.api;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
- * Represents a game node in a Tournament tree. It can be found in any round of the Tournament.
- * <p>
+ * Represents a game node in a Tournament tree.
  * A GameNode means that there is a confrontation between two participants.
  * <p>
  * At the beginning, a GameNode is NOTSTARTED.
@@ -12,7 +12,7 @@ import java.util.List;
  * Once in progress, points can be given to each player.
  * Once the confrontation is over, the GameNode must be FINISHED.
  */
-public interface GameNode extends TournamentNode {
+public interface GameNode {
 
     /**
      * Give or remove points (with a negative value) to one Participant of the GameNode.
@@ -41,7 +41,7 @@ public interface GameNode extends TournamentNode {
      * @throws TournamentException      If there are already two previous nodes, or if the node already part of the previous nodes, or if the game is not NOTSTARTED.
      * @throws IllegalArgumentException If the provided node is null.
      */
-    void addPreviousNode(TournamentNode tournamentNode) throws IllegalArgumentException, TournamentException;
+    void addPreviousNode(GameNode tournamentNode) throws IllegalArgumentException, TournamentException;
 
     /**
      * Add a Participant to the GameNode.
@@ -68,7 +68,7 @@ public interface GameNode extends TournamentNode {
      *
      * @return The previous nodes of this GameNode.
      */
-    List<TournamentNode> getPreviousNodes();
+    List<GameNode> getPreviousNodes();
 
     /**
      * Set the status to FINISHED.
@@ -83,6 +83,7 @@ public interface GameNode extends TournamentNode {
      */
     void finish() throws TournamentException;
 
+
     /**
      * Retrieve the status of the GameNode.
      *
@@ -96,5 +97,42 @@ public interface GameNode extends TournamentNode {
      * @return The participants of the GameNode.
      */
     List<Participant> getParticipants();
+
+
+    /**
+     * Retrieve the winner of the TournamentNode.
+     *
+     * Must be called when there is a winner (for instance if a game is finished).
+     *
+     * @return The winner of this node.
+     * @throws TournamentException If there is no winner yet.
+     */
+    Participant getWinner() throws TournamentException;
+
+    /**
+     * Retrieve the loser of the TournamentNode, if any.
+     * If there simply is no loser, returns an empty Optional.
+     *
+     * Must be called when there is a loser (for instance if a game is finished).
+     *
+     * @return The loser of this node.
+     * @throws TournamentException If we do not know yet if there is a loser.
+     */
+    Optional<Participant> getLoser() throws TournamentException;
+
+    /**
+     * Retrieve the following GameNode, which is the GameNode where the winner of this node will go.
+     * If this node is the final game, then returns an empty Optional.
+     * @return
+     */
+    Optional<GameNode> getFollowingGame();
+
+    /**
+     * Sets the following node to a specific GameNode.
+     * @param gameNode The gameNode to set as following node.
+     * @throws IllegalArgumentException If the provided gameNode is null.
+     */
+    void setFollowingGame(GameNode gameNode) throws IllegalArgumentException;
+
 
 }

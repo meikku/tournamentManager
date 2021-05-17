@@ -25,11 +25,6 @@ public class ParticipantImpl implements Participant {
     }
 
     @Override
-    public int getSeed() {
-        return this.seed;
-    }
-
-    @Override
     public boolean isEliminated() {
         return this.eliminated;
     }
@@ -37,11 +32,6 @@ public class ParticipantImpl implements Participant {
     @Override
     public void eliminate() {
         this.eliminated = true;
-    }
-
-    @Override
-    public void setSeed(int value) {
-        this.seed = value;
     }
 
     @Override
