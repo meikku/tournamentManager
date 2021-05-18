@@ -59,27 +59,24 @@ public interface Tournament {
     List<Game> getAllGames();
 
     /**
-     * Retrieve all rounds of the Tournament. A round is simply a list of tournament nodes that take place in parallel.
-     * Only in the first round, a node can be either a ByeNode (which means a participant will automatically "win" this
-     * round, or a GameNode (which is a normal confrontation between 2 participants).
-     * In all other rounds, there are only GameNodes.
+     * Retrieve all rounds of the Tournament. A round is simply a list of Games that take place in parallel.
      *
      * @return The list of rounds.
      */
     List<List<Game>> getRounds();
 
     /**
-     * Retrieve all GameNodes of the tournament tree that are ready to start.
-     * A GameNode is ready to start if it has two participants and if it has neither started or ended.
+     * Retrieve all Games of the tournament tree that are ready to start.
+     * A Game is ready to start if it has two participants and if it has neither started or ended.
      *
-     * @return All GameNodes of the tournament tree that are ready to start.
+     * @return All Games of the tournament tree that are ready to start.
      */
     List<Game> getGamesReadyToStart();
 
     /**
-     * Retrieve all GameNodes of the tournament tree  that are finished.
+     * Retrieve all Games of the tournament tree that are finished.
      *
-     * @return All GameNodes of the tournament tree that are finished.
+     * @return All Games of the tournament tree that are finished.
      */
     List<Game> getFinishedGames();
 
@@ -104,7 +101,7 @@ public interface Tournament {
      * a list of sets. Each set contains one of several Participants that are ex-æquo.
      * The list of set gives the ranking among sets of Participants.
      * <p>
-     * Two participants are ex-æquo if they were eliminated in the same Round.
+     * Two participants are ex-æquo if they were eliminated in the same round.
      * <p>
      * Can only be called after the Tournament has ended.
      *
@@ -113,11 +110,11 @@ public interface Tournament {
     List<Set<Participant>> computeFinalRanking() throws TournamentException;
 
     /**
-     * Retrieves the Status of the Tournament.
+     * Retrieve the Status of the Tournament.
      * It can either be:
-     * - "not started" when adding players and setting seeds,
-     * - "in progress" when playing games and registering results,
-     * - "finished" when no more games can be played and the final ranking can be computed.
+     * - NOTSTARTED when adding players and setting seeds,
+     * - INPROGRESS when playing games and registering results,
+     * - FINISHED when no more games can be played and the final ranking can be computed.
      *
      * @return The current Status of the Tournament.
      */

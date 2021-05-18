@@ -1,7 +1,7 @@
 package tournamentmanager.core.api;
 
 /**
- * Represents a Status of either a GameNode or a Tournament.
+ * Represents a Status of either a Game or a Tournament.
  *
  * Typically, it is only possible to change a status from
  * NOTSTARTED to INPROGRESS, and from INPROGRESS to FINISHED.
