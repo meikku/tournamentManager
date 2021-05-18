@@ -31,13 +31,20 @@ For instance, for the same tournament, the final ranking is the following one:
 
 NOTE: This library only deals with tournaments where the number of participants is a power of two.
 
-== Compilation
+== Development
 
 This project uses maven for dependency management and compilation.
 To compile, just run:
 ```
 mvn package
 ```
+
+To generate the javadoc:
+```
+mvn site
+```
+
+The javadoc can then be found in `target/site/apidocs/`.
 
 == Basic usage
 
