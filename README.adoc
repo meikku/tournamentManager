@@ -81,9 +81,7 @@ game1.finish();
 When a game is finished, the winner gets added to the following game in the next round, if any (not shown in the example here).
 
 
-== What this library does not do
-
-This library:
+== What this library does *not* do
 
 - Does not deal with tournaments that have a number of participants that is not a power of two, therefore does not deal with _byes_.
 - Does not automatically manage _seeds_ for participants.

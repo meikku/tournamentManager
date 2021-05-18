@@ -30,11 +30,14 @@ public interface Tournament {
 
     /**
      * Start the tournament.
-     * This will create the complete tournament tree and assign participants to their first games.
+     * This will shuffle the list of participantts, create the complete tournament tree,
+     * and assign participants to their first games in the first round.
      * <p>
-     * Can only be called if the Tournament has not started, and cannot be undone.
+     * Can only be called if the Tournament has not started, and if the number of participants is more than 1,
+     * and if the number of participants is a power of two. Cannot be undone.
      *
-     * @throws TournamentException If the tournament has already started.
+     * @throws TournamentException If the tournament has already started, or if there are strictly less than 2 participants,
+     *                             or if the number of participants is not a power of two.
      */
     void start() throws TournamentException;
 
