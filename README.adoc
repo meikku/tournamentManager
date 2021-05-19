@@ -24,8 +24,8 @@ If several participants lose in the same round, they are ex-æquo.
 
 For instance, for the same tournament, the final ranking is the following one:
 
-. _p5_
 . _p7_
+. _p5_
 . _p1_, _p2_
 . _p3_, _p4_, _p6_, _p8_
 
