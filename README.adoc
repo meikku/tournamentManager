@@ -14,7 +14,7 @@ image::img/tournament-init.png[]
 Each node in the tree is a game.
 To win a game, a participant must have more points than the opponent.
 
-For example, here is the same tournament but with all games completed, and with in green the history of _p2_'s results (who is the winner of the tournament):
+For example, here is the same tournament but with all games completed, and with in green the history of _p7_'s results (who is the winner of the tournament):
 
 image::img/tournament-end.png[]
 
