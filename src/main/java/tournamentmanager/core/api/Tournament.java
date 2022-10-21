@@ -112,7 +112,7 @@ public interface Tournament {
     /**
      * Retrieve the Status of the Tournament.
      * It can either be:
-     * - NOTSTARTED when adding players and setting seeds,
+     * - NOTSTARTED when adding players,
      * - INPROGRESS when playing games and registering results,
      * - FINISHED when no more games can be played and the final ranking can be computed.
      *
