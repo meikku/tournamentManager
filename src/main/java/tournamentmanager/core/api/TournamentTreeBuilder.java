@@ -24,20 +24,16 @@ public interface TournamentTreeBuilder {
      *
      * @param participants The list with all participants.
      * @return The complete tournament tree.
-     * @throws TournamentException If the amount of players is so high that the resulting tournament size is
-     *                             higher than Integer.MAX_VALUE.
      */
-    List<List<Game>> buildAllRounds(List<Participant> participants) throws TournamentException;
+    List<List<Game>> buildAllRounds(List<Participant> participants);
 
     /**
      * Build the first round of a tournament tree. This first round is special because it is initially filled with all participants.
      *
      * @param participants The list with all participants.
      * @return The initial round of the tournament tree.
-     * @throws TournamentException If the amount of players is so high that the resulting
-     *                             tournament size is higher than Integer.MAX_VALUE.
      */
-    List<Game> buildInitialRound(List<Participant> participants) throws TournamentException;
+    List<Game> buildInitialRound(List<Participant> participants);
 
     /**
      * Given an already created round, build the next round of a tournament tree.
