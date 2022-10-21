@@ -58,7 +58,7 @@ Tournament myTournament = new TournamentImpl();
 To add participants:
 ```java
 Participant p1 = new ParticipantImpl("p1");
-Participant p2 = new ParticipantImpl("p1");
+Participant p2 = new ParticipantImpl("p2");
 myTournament.addParticipant(p1);
 myTournament.addParticipant(p2);
 ```
