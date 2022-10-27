@@ -147,5 +147,8 @@ public class GameImpl implements Game {
         this.previousGames.add(game);
     }
 
-
+    //Added this for Game Class testability
+    public int getPoints(Participant participant){
+        return this.participants.get(participant);
+    }
 }
