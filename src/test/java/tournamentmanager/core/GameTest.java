@@ -6,6 +6,10 @@ import tournamentmanager.core.api.Participant;
 import tournamentmanager.core.api.TournamentException;
 import tournamentmanager.core.impl.GameImpl;
 import tournamentmanager.core.impl.ParticipantImpl;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameTest {
@@ -21,19 +25,12 @@ public class GameTest {
         p2 = new ParticipantImpl("player2");
     }
 
+    //addPoints
     @Test
     void addPointsProperlyAddsPositiveAmountOfPoints(){
-        try {
-            g.addParticipant(p1);
-        } catch (TournamentException e) {
-            throw new RuntimeException(e);
-        }
 
-        try {
-            g.addParticipant(p2);
-        } catch (TournamentException e) {
-            throw new RuntimeException(e);
-        }
+        assertDoesNotThrow(() -> g.addParticipant(p1));
+        assertDoesNotThrow(() -> g.addParticipant(p2));
 
         assertDoesNotThrow(() -> g.start());
 
@@ -45,45 +42,25 @@ public class GameTest {
 
     @Test
     void addPointsThrowsErrorWhenPlayerIsNull(){
-        assertDoesNotThrow(() -> {
-            g.addParticipant(p1);
-        });
 
-        assertDoesNotThrow(() -> {
-            g.addParticipant(p2);
-        });
+        assertDoesNotThrow(() -> g.addParticipant(p1));
+        assertDoesNotThrow(() -> g.addParticipant(p2));
 
-        assertDoesNotThrow(() -> {
-            g.start();
-        });
+        assertDoesNotThrow(() -> g.start());
 
         assertThrows(IllegalArgumentException.class,
-                () -> {
-            g.addPoints(null, 5);
-        });
+                () -> g.addPoints(null, 5) );
     }
 
     @Test
     void addPointsProperlyAddsNegativeAmountOfPoints(){
-        try {
-            g.addParticipant(p1);
-        } catch (TournamentException e) {
-            throw new RuntimeException(e);
-        }
 
-        try {
-            g.addParticipant(p2);
-        } catch (TournamentException e) {
-            throw new RuntimeException(e);
-        }
+        assertDoesNotThrow(() -> g.addParticipant(p1));
+        assertDoesNotThrow(() -> g.addParticipant(p2));
 
-        assertDoesNotThrow(() -> {
-            g.start();
-        });
+        assertDoesNotThrow(() -> g.start());
 
-        assertDoesNotThrow(() -> {
-            g.addPoints(p1, -2);
-        });
+        assertDoesNotThrow(() -> g.addPoints(p1, -2));
 
         assertEquals(g.getPoints(p1),
                 -2);
@@ -91,17 +68,42 @@ public class GameTest {
 
     @Test
     void addPointsThrowsErrorWhenGameIsNotInProgress(){
-        assertDoesNotThrow(() -> {
-            g.addParticipant(p1);
-        });
+        assertDoesNotThrow(() -> g.addParticipant(p1));
 
-        assertDoesNotThrow(() -> {
-            g.addParticipant(p2);
-        });
+        assertDoesNotThrow(() -> g.addParticipant(p2));
 
         assertThrows(TournamentException.class,
-                () -> {
-                    g.addPoints(p1, 5);
-                });
+                () -> g.addPoints(p1, 5));
     }
+
+    //addParticipant
+    @Test
+    void addParticipantThrowsIllegalArgumentExceptionWhenParticipantIsNull(){
+        assertThrows(IllegalArgumentException.class,
+                () -> g.addParticipant(null));
+    }
+
+    @Test
+    void addParticipantProperlyAddsParticipantWhenParticipantsListContainsTwoOrLessParticipantsAndParticipantIsNotNull(){
+        assertDoesNotThrow(() -> g.addParticipant(p1));
+
+        List<Participant> expected = new ArrayList<>();
+        expected.add(p1);
+
+        assertIterableEquals(expected, g.getParticipants());
+    }
+
+    @Test
+    void addParticipantThrowsTournamentExceptionWhenParticipantsListAlreadyContainsTwoOrMoreParticipants(){
+        assertDoesNotThrow(() -> g.addParticipant(p1));
+        assertDoesNotThrow(() -> g.addParticipant(p2));
+
+        Participant p3 = new ParticipantImpl("player3");
+
+        assertThrows(TournamentException.class,
+                () -> g.addParticipant(p3));
+    }
+
+    //addPreviousGame
+
 }
