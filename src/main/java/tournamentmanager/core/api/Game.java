@@ -136,5 +136,10 @@ public interface Game {
      */
     void setFollowingGame(Game game) throws IllegalArgumentException;
 
-
+    /**
+     * Gets the score of a participant
+     * @param participant The participant to retrieve the score of.
+     * @return The current score of the participant.
+     */
+    int getPoints(Participant participant);
 }

@@ -31,5 +31,8 @@ public class ParticipantImpl implements Participant {
         this.name = name;
     }
 
-
+    /* we implement setter method from isEliminated variable. That allows us to test eliminated method()*/
+    public void setEliminated(boolean eliminated) {
+        this.eliminated = eliminated;
+    }
 }
