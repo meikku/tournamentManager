@@ -27,6 +27,21 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
 
         List<Participant> remainingRankedParticipants = new ArrayList<>(participants);
         List<Game> initialRound = new ArrayList<>();
+
+        /*if(participants.size() >= Integer.MAX_VALUE/2){
+            //If size == MAX_VALUE/2, then the total number of rounds will be of MAX_VALUE + MAX_VALUE - 1 =
+            throw new TournamentException("Too many players, cannot create the tournament");
+        };
+        int amountOfInitialGames = participants.size() / 2;
+        for (int i = 0; i < amountOfInitialGames; i++) {
+            Game game = new GameImpl();
+            game.addParticipant(remainingRankedParticipants.remove(0));
+            game.addParticipant(remainingRankedParticipants.remove(0));
+            initialRound.add(game);
+        }
+        if (remainingRankedParticipants.size() > 0) {
+            throw new RuntimeException("INTERNAL ERROR: there are participants remaining! This should never happen.");
+        }*/
         try {
             int amountOfInitialGames = participants.size() / 2;
             for (int i = 0; i < amountOfInitialGames; i++) {
