@@ -59,12 +59,6 @@ public class TournamentTreeBuilderTest {
         assertTrue(allParticipantsInBuiltInitalRound.containsAll(participants));
     }
 
-
-    @Test
-    void buildInitialRoundThrowsTournamentExceptionWhenTournamentSizeIsTooHigh(){
-        //TODO: implement this test
-    }
-
     @Test
     void buildNextRoundProperlyBuildsANextRound(){
         List<Game> round = assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
@@ -83,11 +77,5 @@ public class TournamentTreeBuilderTest {
     void buildAllRoundsProperlyBuildsATournamentTree(){
         List<List<Game>> testTournamentTree = assertDoesNotThrow(() -> ttb.buildAllRounds(participants));
     }
-
-    @Test
-    void buildAllRoundsThrowsTournamentExceptionWhenTournamentSizeIsTooHigh(){
-        //TODO: implement this test
-    }
-
 
 }
