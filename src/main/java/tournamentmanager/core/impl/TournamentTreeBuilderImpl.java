@@ -31,6 +31,7 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
         for (int i = 0; i < amountOfInitialGames; i++) {
             Game game = new GameImpl();
             try {
+
                 game.addParticipant(remainingRankedParticipants.remove(0));
                 game.addParticipant(remainingRankedParticipants.remove(0));
             } catch (TournamentException e) {
