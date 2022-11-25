@@ -11,7 +11,7 @@ import java.util.List;
 public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
 
     @Override
-    public List<List<Game>> buildAllRounds(List<Participant> rankedParticipants) throws TournamentException {
+    public List<List<Game>> buildAllRounds(List<Participant> rankedParticipants) {
         List<List<Game>> rounds = new ArrayList<>();
         List<Game> nextRound = buildInitialRound(rankedParticipants);
         while (!nextRound.isEmpty()) {
@@ -23,25 +23,26 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
     }
 
     @Override
-    public List<Game> buildInitialRound(List<Participant> participants) throws TournamentException {
+    public List<Game> buildInitialRound(List<Participant> participants) {
 
         List<Participant> remainingRankedParticipants = new ArrayList<>(participants);
         List<Game> initialRound = new ArrayList<>();
-        try {
-            int amountOfInitialGames = participants.size() / 2;
-            for (int i = 0; i < amountOfInitialGames; i++) {
-                Game game = new GameImpl();
+        int amountOfInitialGames = participants.size() / 2;
+        for (int i = 0; i < amountOfInitialGames; i++) {
+            Game game = new GameImpl();
+            try {
                 game.addParticipant(remainingRankedParticipants.remove(0));
                 game.addParticipant(remainingRankedParticipants.remove(0));
-                initialRound.add(game);
+            } catch (TournamentException e) {
+                throw new RuntimeException(
+                        "INTERNAL ERROR: a game was not constructed correctly! This should never happen.");
             }
-            if (remainingRankedParticipants.size() > 0) {
-                throw new RuntimeException("INTERNAL ERROR: there are participants remaining! This should never happen.");
-            }
-            return initialRound;
-        } catch (Exception e) {
-            throw new TournamentException("Too many players, cannot create the tournament.");
+            initialRound.add(game);
         }
+        if (remainingRankedParticipants.size() > 0) {
+            throw new RuntimeException("INTERNAL ERROR: there are participants remaining! This should never happen.");
+        }
+        return initialRound;
     }
 
     @Override
@@ -55,7 +56,8 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
                 newGame.addPreviousGame(gameA);
                 newGame.addPreviousGame(gameB);
             } catch (TournamentException e) {
-                throw new RuntimeException("INTERNAL ERROR: failed when adding previous games to a new Game, should never happen!", e);
+                throw new RuntimeException(
+                        "INTERNAL ERROR: failed when adding previous games to a new Game, should never happen!", e);
             }
             gameA.setFollowingGame(newGame);
             gameB.setFollowingGame(newGame);
@@ -63,6 +65,5 @@ public class TournamentTreeBuilderImpl implements TournamentTreeBuilder {
         }
         return nextRound;
     }
-
 
 }
