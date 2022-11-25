@@ -1,16 +1,19 @@
 package tournamentmanager.core;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import tournamentmanager.core.api.Participant;
-import tournamentmanager.core.api.Tournament;
-import tournamentmanager.core.api.TournamentException;
+import tournamentmanager.core.api.*;
 import tournamentmanager.core.impl.GameImpl;
 import tournamentmanager.core.impl.ParticipantImpl;
 import tournamentmanager.core.impl.TournamentImpl;
+import tournamentmanager.core.impl.TournamentTreeBuilderImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TournamentTest {
 	
@@ -129,6 +132,33 @@ public class TournamentTest {
             t.addParticipant(p4);
             t.start();
         });
+    }
+
+    @Test
+    void testGetGamesInProgressRetrivesGamesInProgress(){
+        TournamentTreeBuilder fakeTtb = mock(TournamentTreeBuilder.class);
+
+        List<List<Game>> returnList = new ArrayList<>();
+        List<Participant> participantsList = new ArrayList<>();
+        participantsList.add(p1);
+        participantsList.add(p2);
+
+        Game fakeGame = mock(Game.class);
+        when(fakeGame.getStatus()).thenReturn(Status.INPROGRESS);
+
+        List<Game> fakeRound = new ArrayList<>();
+        fakeRound.add(fakeGame);
+        returnList.add(fakeRound);
+
+        when(fakeTtb.buildAllRounds(participantsList)).thenReturn(returnList);
+
+        assertDoesNotThrow(() -> t.addParticipant(p1));
+        assertDoesNotThrow(() -> t.addParticipant(p2));
+
+        assertDoesNotThrow(() -> t.startWithTtb(fakeTtb));
+
+        assertTrue(t.getGamesInProgress().containsAll(fakeRound));
+        assertTrue(fakeRound.containsAll(t.getGamesInProgress()));
     }
 
 

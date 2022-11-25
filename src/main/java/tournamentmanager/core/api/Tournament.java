@@ -41,6 +41,8 @@ public interface Tournament {
      */
     void start() throws TournamentException;
 
+    void startWithTtb(TournamentTreeBuilder tournamentTreeBuilder) throws TournamentException;
+
     /**
      * End the tournament.
      * Once a tournament has ended, no new results can be registered.
