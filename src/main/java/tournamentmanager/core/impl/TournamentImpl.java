@@ -25,13 +25,8 @@ public class TournamentImpl implements Tournament {
         }
     }
 
-
     @Override
-    public void start() throws TournamentException {
-        startWithTtb(new TournamentTreeBuilderImpl());
-    }
-
-    public void startWithTtb(TournamentTreeBuilder ttb) throws TournamentException {
+    public void start(TournamentTreeBuilder ttb) throws TournamentException {
         if (this.getStatus() != Status.NOTSTARTED) {
             throw new TournamentException("Cannot start a tournament that has already started.");
         } else if (this.participants.size() < 2) {
