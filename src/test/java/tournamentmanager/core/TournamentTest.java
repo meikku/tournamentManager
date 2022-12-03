@@ -8,15 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import tournamentmanager.core.api.*;
-import tournamentmanager.core.impl.GameImpl;
 import tournamentmanager.core.impl.ParticipantImpl;
 import tournamentmanager.core.impl.TournamentImpl;
 import tournamentmanager.core.impl.TournamentTreeBuilderImpl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class TournamentTest {
 
@@ -39,7 +35,7 @@ public class TournamentTest {
 	
 	// add()
 	@Test
-	public void testAddParticipantGameNotStarted() throws TournamentException {
+	public void testAddParticipantGameNotStarted() {
 		assertDoesNotThrow(() -> {
 			t.addParticipant(p1);
 		});
@@ -68,7 +64,7 @@ public class TournamentTest {
 	}
 
 	@Test
-	public void testAddNullParticipant() throws TournamentException {
+	public void testAddNullParticipant() {
 		assertDoesNotThrow(() -> {
 			p5 = null;
 			t.addParticipant(p5);
@@ -300,7 +296,7 @@ public class TournamentTest {
 
 		while (!t.getGamesReadyToStart().isEmpty()) {
 
-			Set<Participant> rank = Collections.emptySet();
+			Set<Participant> rank = new HashSet<>();
 
 			List<Game> gamesReadyToStart = t.getGamesReadyToStart();
 
@@ -316,14 +312,14 @@ public class TournamentTest {
 				rank.add(game.getParticipants().get(1));
 			}
 
-			expectedRankings.add(rank);
+			expectedRankings.add(0, rank);
 
 			if (gamesReadyToStart.size() == 1) {
 				Participant winner = gamesReadyToStart.get(0).getParticipants().get(0);
 
 				Set<Participant> firstRank = Set.of(winner);
 
-				expectedRankings.add(firstRank);
+				expectedRankings.add(0, firstRank);
 			}
 
 		}
