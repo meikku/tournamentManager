@@ -13,6 +13,7 @@ import tournamentmanager.core.impl.TournamentImpl;
 import tournamentmanager.core.impl.TournamentTreeBuilderImpl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TournamentTest {
 
@@ -179,8 +180,22 @@ public class TournamentTest {
     }
 	//
 	// getAllGames()
-	// TODO
-	//
+	@Test
+	void testGetAllGamesReturnsAllGames() throws TournamentException{
+		t.addParticipant(p1);
+		t.addParticipant(p2);
+		t.addParticipant(p3);
+		t.addParticipant(p4);
+
+		t.start(new TournamentTreeBuilderImpl());
+
+		List<Game> games = t.getRounds().stream().flatMap(List::stream).collect(Collectors.toList());
+
+		assertTrue(games.containsAll(t.getAllGames()));
+		assertTrue(t.getAllGames().containsAll(games));
+	}
+
+
 	// getRounds()
 	// TODO
 
