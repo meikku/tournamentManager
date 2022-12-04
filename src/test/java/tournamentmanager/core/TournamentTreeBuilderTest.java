@@ -61,7 +61,7 @@ public class TournamentTreeBuilderTest {
 
     @Test
     void buildNextRoundProperlyBuildsANextRound(){
-        List<Game> round = assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
+        List<Game> round = ttb.buildInitialRound(participants);
 
         List<Game> testNextRound = ttb.buildNextRound(round);
 
