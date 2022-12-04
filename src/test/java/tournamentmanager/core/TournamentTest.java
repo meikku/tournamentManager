@@ -34,7 +34,7 @@ public class TournamentTest {
 	}
 
 	
-	// add()
+	//addParticipant()
 	@Test
 	public void testAddParticipantGameNotStarted() {
 		assertDoesNotThrow(() -> {
@@ -141,7 +141,7 @@ public class TournamentTest {
 		});
 	}
 	
-	// end()
+	//end()
 	@Test
     public void testEndTournamentThatHasNotStarted() throws TournamentException{
     	t.addParticipant(p1);
@@ -178,7 +178,7 @@ public class TournamentTest {
 		
 		assertDoesNotThrow(() -> t.end());
     }
-	//
+
 	// getAllGames()
 	@Test
 	void testGetAllGamesReturnsAllGames() throws TournamentException{
@@ -197,36 +197,43 @@ public class TournamentTest {
 
 
 	// getRounds()
-	// TODO
+	@Test
+	void testGetRoundsRetrieveAllRoundsProperly() throws TournamentException {
+		t.addParticipant(p1);
+		t.addParticipant(p2);
+		t.addParticipant(p3);
+		t.addParticipant(p4);
+
+		t.start(new TournamentTreeBuilderImpl());
+
+		assertTrue(t.getRounds().size() == 2);
+		assertTrue(t.getRounds().get(0).size() == 2);
+		assertTrue(t.getRounds().get(1).size() == 1);
+	}
 
 	// getGamesReadyToStart()
-	/**
 	@Test
-    public void testGamesReadyToStart(){
-		TournamentTreeBuilder fakeTtb = mock(TournamentTreeBuilder.class);
-		List<List<Game>> returnList = new ArrayList<>();
-		List<Participant> participantsList = new ArrayList<>();
-		participantsList.add(p3);
-		participantsList.add(p4);
+    public void testGamesReadyToStart() throws TournamentException {
+		t.addParticipant(p1);
+		t.addParticipant(p2);
+		t.addParticipant(p3);
+		t.addParticipant(p4);
 
-		Game fakeGame = mock(Game.class);
-		when(fakeGame.getStatus()).thenReturn(Status.NOTSTARTED);
+		t.start(new TournamentTreeBuilderImpl());
 
-		List<Game> fakeRound = new ArrayList<>();
-		fakeRound.add(fakeGame);
-		returnList.add(fakeRound);
+		Game gameToStart = t.getRounds().get(0).get(0);
+		Game expectedReadyToStartGame = t.getRounds().get(0).get(1);
+		Game gameWaitingForSecondParticipant = t.getRounds().get(1).get(0);
 
-		when(fakeTtb.buildAllRounds(participantsList)).thenReturn(returnList);
-		
-		assertDoesNotThrow(() -> t.addParticipant(p3));
-		assertDoesNotThrow(() -> t.addParticipant(p4));
+		gameToStart.start();
+		gameToStart.addPoints(gameToStart.getParticipants().get(0), 2);
+		gameToStart.finish();
 
-		assertDoesNotThrow(() -> t.start(fakeTtb));
-		
-		assertTrue(t.getGamesReadyToStart().containsAll(fakeRound));
-		assertTrue(fakeRound.containsAll(t.getGamesReadyToStart()));
-    }
-	*/
+		assertTrue(t.getGamesReadyToStart().contains(expectedReadyToStartGame));
+		assertTrue(t.getGamesReadyToStart().size() == 1);
+
+
+	}
 
 	// getFinishedGames()
 	@Test
@@ -287,7 +294,7 @@ public class TournamentTest {
 	// getFutureGames() 
 	// TODO
 	
-	// computeFinalRanking()
+	// computeFinalRankings()
 	@Test
 	void testComputeFinalRankingsThrowsTournamentExceptionWhenItIsNotFinished() {
 		assertDoesNotThrow(() -> t.addParticipant(p1));
