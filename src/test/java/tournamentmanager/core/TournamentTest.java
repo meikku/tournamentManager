@@ -292,7 +292,26 @@ public class TournamentTest {
 	}
 
 	// getFutureGames() 
-	// TODO
+	@Test
+	void  testGetFutureGamesRetrievesFutureGamesProperly() throws TournamentException {
+		t.addParticipant(p1);
+		t.addParticipant(p2);
+		t.addParticipant(p3);
+		t.addParticipant(p4);
+
+		t.start(new TournamentTreeBuilderImpl());
+
+		Game gameToStart = t.getRounds().get(0).get(0);
+		Game expectedReadyToStartGame = t.getRounds().get(0).get(1);
+		Game gameWaitingForSecondParticipant = t.getRounds().get(1).get(0);
+
+		gameToStart.start();
+		gameToStart.addPoints(gameToStart.getParticipants().get(0), 2);
+		gameToStart.finish();
+
+		assertTrue(t.getFutureGames().contains(gameWaitingForSecondParticipant));
+		assertTrue(t.getGamesReadyToStart().size() == 1);
+	}
 	
 	// computeFinalRankings()
 	@Test
