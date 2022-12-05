@@ -244,6 +244,10 @@ public class TournamentTest {
 		participantsList.add(p1);
 		participantsList.add(p2);
 
+		List<Participant> participantsListReversed = new ArrayList<>();
+		participantsListReversed.add(p2);
+		participantsListReversed.add(p1);
+
 		Game fakeGame = mock(Game.class);
 		when(fakeGame.getStatus()).thenReturn(Status.FINISHED);
 
@@ -252,6 +256,8 @@ public class TournamentTest {
 		returnList.add(fakeRound);
 
 		when(fakeTtb.buildAllRounds(participantsList)).thenReturn(returnList);
+		//This is a bad hotfix, this test method should be changed soon!
+		when(fakeTtb.buildAllRounds(participantsListReversed)).thenReturn(returnList);
 		
 		assertDoesNotThrow(() -> t.addParticipant(p1));
 		assertDoesNotThrow(() -> t.addParticipant(p2));
@@ -273,6 +279,10 @@ public class TournamentTest {
 		participantsList.add(p1);
 		participantsList.add(p2);
 
+		List<Participant> participantsListReversed = new ArrayList<>();
+		participantsListReversed.add(p2);
+		participantsListReversed.add(p1);
+
 		Game fakeGame = mock(Game.class);
 		when(fakeGame.getStatus()).thenReturn(Status.INPROGRESS);
 
@@ -281,6 +291,8 @@ public class TournamentTest {
 		returnList.add(fakeRound);
 
 		when(fakeTtb.buildAllRounds(participantsList)).thenReturn(returnList);
+		//This is a bad hotfix, this test method should be changed soon!
+		when(fakeTtb.buildAllRounds(participantsListReversed)).thenReturn(returnList);
 
 		assertDoesNotThrow(() -> t.addParticipant(p1));
 		assertDoesNotThrow(() -> t.addParticipant(p2));
