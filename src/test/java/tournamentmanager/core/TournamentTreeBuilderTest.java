@@ -45,7 +45,7 @@ public class TournamentTreeBuilderTest {
 
     //Functional method test
     @Test
-    void buildInitalRoundProvidesEveryParticipantAGameAndEveryGameDoesNotContainAnyPreviousGames(){
+    void buildInitialRoundProvidesEveryParticipantAGameAndEveryGameDoesNotContainAnyPreviousGames(){
         List<Game> testInitialRound = assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
 
         List<Participant> allParticipantsInBuiltInitalRound = new ArrayList<>();
@@ -86,4 +86,69 @@ public class TournamentTreeBuilderTest {
         assertEquals(1, testTournamentTree.get(2).size());
     }
 
+
+
+    //Structural method test
+    @Test
+    void testBuildInitialRoundWorksProperlyWithTwoParticipants(){
+        Participant p1 = new ParticipantImpl("p1");
+        Participant p2 = new ParticipantImpl("p2");
+
+        participants = new ArrayList<>();
+
+        participants.add(p1);
+        participants.add(p2);
+
+        assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
+    }
+
+    //Structural method test
+    @Test
+    void testBuildInitialRoundThrowsErrorWhenThereAreThreePlayers(){
+        Participant p1 = new ParticipantImpl("p1");
+        Participant p2 = new ParticipantImpl("p2");
+        Participant p3 = new ParticipantImpl("p3");
+
+        participants = new ArrayList<>();
+
+        participants.add(p1);
+        participants.add(p2);
+        participants.add(p3);
+
+        assertThrows(RuntimeException.class, () -> ttb.buildInitialRound(participants));
+    }
+
+    //Structural method test
+    @Test
+    void testBuildInitialRoundThrowsErrorWhenThereAreTwoPlayersAndOneIsNull(){
+        Participant p1 = new ParticipantImpl("p1");
+        Participant p2 = null;
+
+        participants = new ArrayList<>();
+
+        participants.add(p1);
+        participants.add(p2);
+
+        assertThrows(RuntimeException.class, () -> ttb.buildInitialRound(participants));
+    }
+
+    //Structural method test
+    @Test
+    void testBuildInitialRoundThrowsErrorWhenThereIsOnePlayer(){
+        Participant p1 = new ParticipantImpl("p1");
+
+        participants = new ArrayList<>();
+
+        participants.add(p1);
+
+        assertThrows(RuntimeException.class, () -> ttb.buildInitialRound(participants));
+    }
+
+    //Structural method test
+    @Test
+    void testBuildInitialRoundThrowsErrorWhenGivenAnEmptyList(){
+        participants = new ArrayList<>();
+
+        assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
+    }
 }
