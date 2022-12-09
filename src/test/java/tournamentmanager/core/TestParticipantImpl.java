@@ -52,4 +52,11 @@ public class TestParticipantImpl {
     }
 
 
+    //Mutation analysis method test
+    @Test
+    public void testIsEliminated(){
+        participant.setEliminated(false);
+
+        assertEquals(false, participant.isEliminated());
+    }
 }

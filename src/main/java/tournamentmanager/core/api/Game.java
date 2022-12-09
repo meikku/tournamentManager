@@ -142,4 +142,5 @@ public interface Game {
      * @return The current score of the participant.
      */
     int getPoints(Participant participant);
+    public void setStatus(Status status);
 }

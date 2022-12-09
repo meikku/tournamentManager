@@ -15,6 +15,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <junit.jupiter.version>5.6.0</junit.jupiter.version>
         <jacoco.version>0.8.5</jacoco.version>
+        <pitest.version>1.5.1</pitest.version>
     </properties>
 
     <dependencies>
@@ -31,8 +32,35 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>mutationCoverage</goal>
+                        </goals>
+                        <phase>test</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>0.12</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <targetTests>
+                        <param>tournamentmanager.core.*</param>
+                    </targetTests>
+                </configuration>
+            </plugin>
          <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -86,6 +114,18 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
 		</plugins>
 	</reporting>
 

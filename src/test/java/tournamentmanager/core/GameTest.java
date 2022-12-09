@@ -352,7 +352,7 @@ public class GameTest {
     //getLoser
     //Functional method test
     @Test
-    void getLoserReturnsTheWinnerOfAGameWhenThereIsAWinnerAndTheGameIsFinished() throws TournamentException {
+    void getLoserReturnsTheLoserOfAGameWhenThereIsALoserAndTheGameIsFinished() throws TournamentException {
         g.addParticipant(p1);
         g.addParticipant(p2);
 
@@ -363,11 +363,7 @@ public class GameTest {
 
         g.finish();
 
-        try {
-            assertEquals(p2, g.getLoser());
-        } catch (TournamentException e) {
-            throw new RuntimeException(e);
-        }
+        assertEquals(p2, g.getLoser());
     }
 
     //Functional method test
@@ -476,5 +472,38 @@ public class GameTest {
         Participant impostor = new ParticipantImpl("impostor");
 
         assertThrows(IllegalArgumentException.class, () -> g.addPoints(impostor, 3));
+    }
+
+    //Mutation analysis method test
+    @Test
+    public void getWinnerDoesNotReturnAPlayerIfScoresAreEven() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
+
+        g.start();
+
+        g.addPoints(p1, 1);
+        g.addPoints(p2, 1);
+
+        g.setStatus(Status.FINISHED);
+
+
+        assertEquals(null, g.getWinner());
+    }
+
+    //Mutation analysis method test
+    @Test
+    public void getLoserDoesNotReturnAPlayerIfScoresAreEven() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
+
+        g.start();
+
+        g.addPoints(p1, 1);
+        g.addPoints(p2, 1);
+
+        g.setStatus(Status.FINISHED);
+
+        assertEquals(null, g.getLoser());
     }
 }

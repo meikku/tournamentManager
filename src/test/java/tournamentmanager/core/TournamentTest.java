@@ -446,4 +446,49 @@ public class TournamentTest {
 		assertDoesNotThrow(() -> t.end());
     	assertEquals(t.getStatus(),Status.FINISHED);
 	}
+
+	//Mutation analysis method test
+	@Test
+	public void testComputeFinalRankingsIsNotEmpty() throws TournamentException {
+		t.addParticipant(p1);
+		t.addParticipant(p2);
+		t.addParticipant(p3);
+		t.addParticipant(p4);
+
+		t.start(new TournamentTreeBuilderImpl());
+
+
+		while (!t.getGamesReadyToStart().isEmpty()) {
+
+			Set<Participant> rank = new HashSet<>();
+
+			List<Game> gamesReadyToStart = t.getGamesReadyToStart();
+
+			for (Game game : t.getGamesReadyToStart()) {
+				game.start();
+
+				Participant winner = game.getParticipants().get(0);
+
+				game.addPoints(winner, 2);
+
+				game.finish();
+
+				rank.add(game.getParticipants().get(1));
+			}
+
+
+			if (gamesReadyToStart.size() == 1) {
+				Participant winner = gamesReadyToStart.get(0).getParticipants().get(0);
+
+				Set<Participant> firstRank = Set.of(winner);
+			}
+
+		}
+
+		t.end();
+
+		List<Set<Participant>> result = t.computeFinalRanking();
+
+		assertNotEquals(Collections.emptyList(), result);
+	}
 }

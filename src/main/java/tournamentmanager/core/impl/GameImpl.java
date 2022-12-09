@@ -87,8 +87,10 @@ public class GameImpl implements Game {
         Participant p2 = plist.get(1);
         if (this.participants.get(p1) > this.participants.get(p2)) {
             return p1;
-        } else {
+        } else if (this.participants.get(p2) > this.participants.get(p1)) {
             return p2;
+        } else {
+            return null; //never happens
         }
     }
 
@@ -151,4 +153,5 @@ public class GameImpl implements Game {
     public int getPoints(Participant participant){
         return this.participants.get(participant);
     }
+    public void setStatus(Status status){this.status = status;}
 }
