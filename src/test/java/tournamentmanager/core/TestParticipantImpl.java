@@ -3,6 +3,7 @@ package tournamentmanager.core;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tournamentmanager.core.api.Participant;
 import tournamentmanager.core.impl.ParticipantImpl;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,5 +30,26 @@ public class TestParticipantImpl {
         assertTrue(participant.isEliminated());
 
     }
+
+    //Functional method test
+    @Test
+    public void testGetNameProperlyRetrievesPlayerName(){
+        String expected = "expected";
+
+        participant = new ParticipantImpl(expected);
+
+        assertEquals(expected, participant.getName());
+    }
+
+    //Functional method test
+    @Test
+    public void testSetNameProperlySetsPlayerName(){
+        String expected = "expected";
+
+        participant.setName(expected);
+
+        assertEquals(expected, participant.getName());
+    }
+
 
 }

@@ -99,7 +99,8 @@ public class TournamentTreeBuilderTest {
         participants.add(p1);
         participants.add(p2);
 
-        assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
+        List<Game> res = assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
+        assertTrue(res.size() == 1);
     }
 
     //Structural method test
@@ -149,6 +150,7 @@ public class TournamentTreeBuilderTest {
     void testBuildInitialRoundThrowsErrorWhenGivenAnEmptyList(){
         participants = new ArrayList<>();
 
-        assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
+        List<Game> res = assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
+        assertTrue(res.size() == 0);
     }
 }
