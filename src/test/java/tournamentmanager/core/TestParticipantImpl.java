@@ -14,11 +14,14 @@ public class TestParticipantImpl {
 
     }
 
+    //Functional method test
     @Test
     public void testEliminated1(){
         participant.eliminate();
         assertTrue(participant.isEliminated());
     }
+
+    //Functional method test
     @Test
     public void testEliminated2(){
         participant.setEliminated(true);

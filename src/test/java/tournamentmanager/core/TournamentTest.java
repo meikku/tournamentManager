@@ -35,6 +35,7 @@ public class TournamentTest {
 
 	
 	//addParticipant()
+	//Functional method test
 	@Test
 	public void testAddParticipantGameNotStarted() {
 		assertDoesNotThrow(() -> {
@@ -42,6 +43,7 @@ public class TournamentTest {
 		});
 	}
 
+	//Functional method test
 	@Test
 	public void testAddParticipantGameHasStarted() throws TournamentException {
 		t.addParticipant(p1);
@@ -52,6 +54,7 @@ public class TournamentTest {
 		});
 	}
 
+	//Functional method test
 	@Test
 	public void testAddParticipantGameHasEnded() throws TournamentException {
 		TournamentTreeBuilder fakeTtb = mock(TournamentTreeBuilder.class);
@@ -64,6 +67,7 @@ public class TournamentTest {
 		});
 	}
 
+	//Functional method test
 	@Test
 	public void testAddNullParticipant() {
 		assertDoesNotThrow(() -> {
@@ -71,7 +75,8 @@ public class TournamentTest {
 			t.addParticipant(p5);
 		});
 	}
-	
+
+	//Functional method test
 	@Test
 	public void testAddSameParticipantMultipleTimes() throws TournamentException {
 
@@ -85,6 +90,7 @@ public class TournamentTest {
 	}
 
 	// start()
+	//Functional method test
 	@Test
 	public void testStartWithLessThanTwoParticipants() throws TournamentException {
 
@@ -94,6 +100,7 @@ public class TournamentTest {
 		});
 	}
 
+	//Functional method test
 	@Test
 	public void testStartNumberOfParticipantsNotPowerOfTwo() throws TournamentException {
 
@@ -105,6 +112,7 @@ public class TournamentTest {
 		});
 	}
 
+	//Functional method test
 	@Test
 	public void testStartWithTwoOrMoreParticipantsInPowerOfTwo() throws TournamentException {
 
@@ -117,6 +125,7 @@ public class TournamentTest {
 		});
 	}
 
+	//Functional method test
 	@Test
 	public void testStartWhenTournamentInProgress() throws TournamentException {
 
@@ -128,6 +137,7 @@ public class TournamentTest {
 		});
 	}
 
+	//Functional method test
 	@Test
 	public void testStartWhenTournamentFinished() throws TournamentException {
 		t.addParticipant(p1);
@@ -142,13 +152,15 @@ public class TournamentTest {
 	}
 	
 	//end()
+	//Functional method test
 	@Test
     public void testEndTournamentThatHasNotStarted() throws TournamentException{
     	t.addParticipant(p1);
 		t.addParticipant(p2);
     	assertThrows(TournamentException.class, () -> t.end());
     }
-	
+
+	//Functional method test
 	@Test
     public void testEndTournamentInProgress() throws TournamentException{
     	t.addParticipant(p1);
@@ -156,7 +168,8 @@ public class TournamentTest {
 		t.start(new TournamentTreeBuilderImpl());
     	assertThrows(TournamentException.class, () -> t.end());
     }
-	
+
+	//Functional method test
 	@Test
     public void testEndTournamentWithGamesFinished() throws TournamentException{
     	t.addParticipant(p1);
@@ -180,6 +193,7 @@ public class TournamentTest {
     }
 
 	// getAllGames()
+	//Functional method test
 	@Test
 	void testGetAllGamesReturnsAllGames() throws TournamentException{
 		t.addParticipant(p1);
@@ -197,6 +211,7 @@ public class TournamentTest {
 
 
 	// getRounds()
+	//Functional method test
 	@Test
 	void testGetRoundsRetrieveAllRoundsProperly() throws TournamentException {
 		t.addParticipant(p1);
@@ -212,6 +227,7 @@ public class TournamentTest {
 	}
 
 	// getGamesReadyToStart()
+	//Functional method test
 	@Test
     public void testGamesReadyToStart() throws TournamentException {
 		t.addParticipant(p1);
@@ -236,6 +252,7 @@ public class TournamentTest {
 	}
 
 	// getFinishedGames()
+	//Functional method test
 	@Test
     public void testGetFinishedGames(){
 		TournamentTreeBuilder fakeTtb = mock(TournamentTreeBuilder.class);
@@ -270,6 +287,7 @@ public class TournamentTest {
     }
 
 	// getGamesInProgress()
+	//Functional method test
 	@Test
 	void testGetGamesInProgressRetrivesGamesInProgress() {
 		TournamentTreeBuilder fakeTtb = mock(TournamentTreeBuilder.class);
@@ -303,7 +321,8 @@ public class TournamentTest {
 		assertTrue(fakeRound.containsAll(t.getGamesInProgress()));
 	}
 
-	// getFutureGames() 
+	// getFutureGames()
+	//Functional method test
 	@Test
 	void  testGetFutureGamesRetrievesFutureGamesProperly() throws TournamentException {
 		t.addParticipant(p1);
@@ -326,6 +345,7 @@ public class TournamentTest {
 	}
 	
 	// computeFinalRankings()
+	//Functional method test
 	@Test
 	void testComputeFinalRankingsThrowsTournamentExceptionWhenItIsNotFinished() {
 		assertDoesNotThrow(() -> t.addParticipant(p1));
@@ -336,6 +356,7 @@ public class TournamentTest {
 		assertThrows(TournamentException.class, () -> t.computeFinalRanking());
 	}
 
+	//Functional method test
 	@Test
 	void testComputeFinalRankingsReturnsTheCorrectRankings() throws TournamentException {
 		t.addParticipant(p1);
@@ -388,6 +409,7 @@ public class TournamentTest {
 	}
 
 	// getStatus()
+	//Functional method test
 	@Test
 	public void testStatusWhenTournamentHasNotStarted() throws TournamentException {
 		t.addParticipant(p1);
@@ -395,6 +417,7 @@ public class TournamentTest {
 		assertEquals(t.getStatus(), Status.NOTSTARTED);
 	}
 
+	//Functional method test
 	@Test
 	public void testStatusWhenTournamentHasStarted() throws TournamentException {
 		t.addParticipant(p1);
@@ -403,6 +426,7 @@ public class TournamentTest {
 		assertEquals(t.getStatus(), Status.INPROGRESS);
 	}
 
+	//Functional method test
 	@Test
 	public void testStatusWhenTournamentHasEnded() throws TournamentException {
 		TournamentTreeBuilder fakeTtb = mock(TournamentTreeBuilder.class);

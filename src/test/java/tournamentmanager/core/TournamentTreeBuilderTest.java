@@ -43,6 +43,7 @@ public class TournamentTreeBuilderTest {
         ttb = new TournamentTreeBuilderImpl();
     }
 
+    //Functional method test
     @Test
     void buildInitalRoundProvidesEveryParticipantAGameAndEveryGameDoesNotContainAnyPreviousGames(){
         List<Game> testInitialRound = assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
@@ -59,6 +60,7 @@ public class TournamentTreeBuilderTest {
         assertTrue(allParticipantsInBuiltInitalRound.containsAll(participants));
     }
 
+    //Functional method test
     @Test
     void buildNextRoundProperlyBuildsANextRound(){
         List<Game> round = ttb.buildInitialRound(participants);
@@ -73,9 +75,15 @@ public class TournamentTreeBuilderTest {
         }
     }
 
+    //Functional method test
     @Test
     void buildAllRoundsProperlyBuildsATournamentTree(){
         List<List<Game>> testTournamentTree = assertDoesNotThrow(() -> ttb.buildAllRounds(participants));
+
+        assertEquals(3, testTournamentTree.size());
+        assertEquals(4, testTournamentTree.get(0).size());
+        assertEquals(2, testTournamentTree.get(1).size());
+        assertEquals(1, testTournamentTree.get(2).size());
     }
 
 }
