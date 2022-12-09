@@ -1,0 +1,91 @@
+= Tournament Management Test Project Report
+
+== Analyse de la testabilité
+
+game : add method getPoints() pour acceder les points des joueur
+un participant peut avoir les points negatif selon le specification ?
+un participant sans nom  -> no error
+Tournament :
+start() -> instance TournamentTreeBuilder à l’intérieur de la méthode (probleme de controlabilité)
+Solution : créer une méhtode start dans laquelle on peut indiquer quel tournamentTreeBuilder utiliser
+
+Fixed buildAllRounds (removed nextRound.clear() )
+La méthode start() de Tournament appelle la methode shuffle(), ce qui pose un probleme de stabilité. Solution -> couvrir toutes les cas possibles du shuffle (CETTE SOLUTION EST UN HOTFIX, elle est destinée à changer)
+
+
+image::img/tournament-end.png[]
+
+Once a tournament is over, it is possible to obtain a partial ranking of the participants base on their results.
+A participant has a better rank than another one if he or she loses in a later round.
+If several participants lose in the same round, they are ex-æquo.
+
+For instance, for the same tournament, the final ranking is the following one:
+
+. _p7_
+. _p5_
+. _p1_, _p2_
+. _p3_, _p4_, _p6_, _p8_
+
+NOTE: This library only deals with tournaments where the number of participants is a power of two.
+
+== Development
+
+This project uses maven for dependency management and compilation.
+To compile, just run:
+```
+mvn package
+```
+
+To generate the javadoc:
+```
+mvn site
+```
+
+The javadoc can then be found in `target/site/apidocs/`.
+
+== Basic usage
+
+The entry point of the library is the `Tournament` interface (with its implementation `TournamentImpl`), which defines all the main services.
+
+To create an empty tournament:
+```java
+Tournament myTournament = new TournamentImpl();
+```
+
+To add participants:
+```java
+Participant p1 = new ParticipantImpl("p1");
+Participant p2 = new ParticipantImpl("p2");
+myTournament.addParticipant(p1);
+myTournament.addParticipant(p2);
+```
+
+To start the tournament:
+```java
+myTournament.start();
+```
+
+
+Once a tournament has started, participants cannot be added, and results can be registered.
+
+To get the next games that must be played:
+```java
+List<Game> nextGames = myTournament.getGamesReadyToStart();
+Game game1 = nextGames.get(0); // here there is only one game
+```
+
+To start a game, add results, and finish a game:
+```java
+game1.start();
+game1.addPoints(p1, 2);
+game1.addPoints(p2, 0);
+game1.finish();
+```
+
+When a game is finished, the winner gets added to the following game in the next round, if any (not shown in the example here).
+
+
+== What this library does *not* do
+
+- Does not deal with tournaments that have a number of participants that is not a power of two, therefore does not deal with _byes_.
+- Does not automatically manage _seeds_ for participants.
