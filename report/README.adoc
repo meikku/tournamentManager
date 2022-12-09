@@ -2,90 +2,187 @@
 
 == Analyse de la testabilité
 
-game : add method getPoints() pour acceder les points des joueur
-un participant peut avoir les points negatif selon le specification ?
-un participant sans nom  -> no error
-Tournament :
-start() -> instance TournamentTreeBuilder à l’intérieur de la méthode (probleme de controlabilité)
-Solution : créer une méhtode start dans laquelle on peut indiquer quel tournamentTreeBuilder utiliser
+* Ajout de méthode getPoints() et setStatus() dans game pour des raisons d'observabilité et de contrôlabilité, respectivement.
+* La méthode buildAllRounds avait un défaut, causé par l'utilisation de la méthode List::clear(). La solution a été de changer le code est de réinstancier une liste temporaire au lieu de la vider à chaque itération (voir code).
+* La méthode start() instancie elle même un TournamentTreeBuilder à chaque appel, ce qui cause des problèmes de contrôlabilité. La solution a été de passer la responsabilité de cette instanciation en paramètre. Changement de la signature de Tournament::start() vers Tournament::start(TournamentTreeBuilder)
 
-Fixed buildAllRounds (removed nextRound.clear() )
-La méthode start() de Tournament appelle la methode shuffle(), ce qui pose un probleme de stabilité. Solution -> couvrir toutes les cas possibles du shuffle (CETTE SOLUTION EST UN HOTFIX, elle est destinée à changer)
+== Application d'une méthode fonctionnelle
 
+=== Game::addPoints(Participant participant, int points)
 
-image::img/tournament-end.png[]
+Entrées :
 
-Once a tournament is over, it is possible to obtain a partial ranking of the participants base on their results.
-A participant has a better rank than another one if he or she loses in a later round.
-If several participants lose in the same round, they are ex-æquo.
+* this.status
+* participant
+* points
 
-For instance, for the same tournament, the final ranking is the following one:
+Sorties :
 
-. _p7_
-. _p5_
-. _p1_, _p2_
-. _p3_, _p4_, _p6_, _p8_
+* this.participants
+* TournamentException
+* IllegalArgumentException
 
-NOTE: This library only deals with tournaments where the number of participants is a power of two.
+Caractéristiques :
 
-== Development
+* participant : [null] ~a1~ [=/= null] ~a2~
+* points : [p<0] ~b1~    [p = 0] ~b2~     [p > 0] ~b3~
+* this.status : [INPROGRESS] ~b1~          [=/= INPROGRESS] ~b2~
 
-This project uses maven for dependency management and compilation.
-To compile, just run:
-```
-mvn package
-```
+Multiple Base Choice Coverage (a2, b3, c1) & (a2, b1, c1):
 
-To generate the javadoc:
-```
-mvn site
-```
+(a2, b3, c1) : Le cas où on souhaite ajouter un nombre de points à un adversaire existant de la partie en cours. C’est le cas le plus courant.
 
-The javadoc can then be found in `target/site/apidocs/`.
+(a2, b1, c1) : Le cas où on souhaite retirer un nombre de points à un adversaire existant de la partie en cours. Bien que moins courant que le cas précédent, c’est aussi une possibilité non négligeable dans des cas d’arbitrage, d’erreur humaine lors du renseignement des scores, ou tout simplement de jeu ou il est possible de perdre des points au cours d’une partie.
 
-== Basic usage
+Suite de tests :
 
-The entry point of the library is the `Tournament` interface (with its implementation `TournamentImpl`), which defines all the main services.
+* (a2, b3, c1) : addPointsProperlyAddsPositiveAmountOfPoints
+** oracle : addPoints() doesn’t throw error, players have the proper amount of points
 
-To create an empty tournament:
-```java
-Tournament myTournament = new TournamentImpl();
-```
+* (a1, b3, c1) : addPointsThrowsErrorWhenPlayerIsNull
+** oracle : IllegalArgumentException
 
-To add participants:
-```java
-Participant p1 = new ParticipantImpl("p1");
-Participant p2 = new ParticipantImpl("p2");
-myTournament.addParticipant(p1);
-myTournament.addParticipant(p2);
-```
+* (a2, b1, c1)* : addPointsProperlyAddsNegativeAmountOfPoints
+** oracle : addPoints() doesn’t throw error, players have the proper amount of points
 
-To start the tournament:
-```java
-myTournament.start();
-```
+* (a2, b2, c1) : addPointsProperlyAddsPositiveAmountOfPoints (This test was redundant with (a2, b3, c1) and was implemented with it as a result)
+** oracle : addPoints() doesn’t throw error, players have the proper amount of points
+
+* (a2, b3, c2) : addPointsThrowsErrorWhenGameIsNotInProgress
+** oracle : TournamentException
+
+* (a2, b1, c1) : addPointsProperlyAddsPositiveAmountOfPoints (*Mentioned above already)
+** oracle : addPoints() doesn’t throw error, players have the proper amount of points
+
+* (a1, b1, c1) : addPointsThrowsErrorWhenPlayerIsNull (This test was redundant with (a1, b3, c1) and was implemented with it as a result)
+** oracle : IllegalArgumentException
+
+* (a2, b1, c2) : addPointsThrowsErrorWhenGameIsNotInProgress (This test was redundant with (a1, b3, c1) and was implemented with it as a result)
+** oracle : TournamentException
 
 
-Once a tournament has started, participants cannot be added, and results can be registered.
+=== Tournament::start(TournamentTreeBuilder ttb)
 
-To get the next games that must be played:
-```java
-List<Game> nextGames = myTournament.getGamesReadyToStart();
-Game game1 = nextGames.get(0); // here there is only one game
-```
+Entrées :
 
-To start a game, add results, and finish a game:
-```java
-game1.start();
-game1.addPoints(p1, 2);
-game1.addPoints(p2, 0);
-game1.finish();
-```
+* this.participants
+* this.status
+* ttb
 
-When a game is finished, the winner gets added to the following game in the next round, if any (not shown in the example here).
+Sorties :
+
+* Void
+* TournamentException
+
+Caractéristiques :
+
+* participants.length : [<2] ~a1~       [>= 2] ~a2~
+* participants.length : [Power of 2] ~b1~       [not a Power of 2] ~b2~
+* this.status : [NOTSTARTED] ~c1~     [INPROGRESS] ~c2~     [FINISHED] ~c3~
+
+Base Choice Coverage (a2, b1, c1) : Le cas le plus classique, où on utilise cette fonction pour construire un arbre de tournoi de plus de 2 joueurs, avec un nombre en puissance de deux car c’est le seul cas géré par tournamentmanager, et où le tournoi n’a pas déjà été lancé.
+
+* (a2, b1, c1) : testStartWithTwoOrMoreParticipantsInPowerOfTwo
+** oracle: tournament is started, no error
+
+* (a1, b1, c1) : testStartWithLessThanTwoParticipants
+** oracle: TournamentException
+
+* (a2, b2, c1) : testStartNumberOfParticipantsNotPowerOfTwo
+** oracle: TournamentException
+
+* (a2, b1, c2) : testStartWhenTournamentInProgress
+** oracle: TournamentException
+
+* (c2, b1, c3) : testStartWhenTournamentFinished
+** oracle: TournamentException
 
 
-== What this library does *not* do
+== 3.4 Qualité des tests (a) : couverture du code
 
-- Does not deal with tournaments that have a number of participants that is not a power of two, therefore does not deal with _byes_.
-- Does not automatically manage _seeds_ for participants.
+image::firstJacocoReports/screenglobal.png[]
+image::firstJacocoReports/screenparticipant.png[]
+image::firstJacocoReports/screengame.png[]
+image::firstJacocoReports/screentournament.png[]
+image::firstJacocoReports/screentournamenttreebuilder.png[]
+
+
+Les résultats obtenus sont relativement bons : la majorié du code est couverte, mais certaines parties de méthodes clés ne le sont pas, notamment buildInitialRound, buildNextRound
+
+== 3.5 Applications d'une méthode structurelle
+
+=== TournamentTreeBuilder::buildInitialRound
+
+image::CFG1.jpeg[]
+
+Tous les 1 chemins - Ce critère permet de parcourir tous les chemins au cours desquels buildInitialRound throw une erreur
+
+. 27-29 -> 30 init -> 31 -> 32 -> 34-35 -> 40 -> 30 incr -> 30 init -> 42 -> 45 -> S
+. 27-29 -> 30 init -> 31 -> 32 -> 34-35 -> 40 -> 30 incr -> 30 init -> 42 -> 43 -> S
+. 27-29 -> 30 init -> 31 -> 32 -> 34-35 ->36 -> 37 -> S
+. 27-29 -> 30 init -> 42 -> 43 -> S
+. 27-29 -> 30 init -> 42 -> 45 -> S
+
+
+Scénarios de test :
+
+image::testscnearios1.png[]
+
+Le chemin 3. est irréalisable : quand addParticipant throw une erreur, alors la méthode de test qui l'a appellée s'arrête instantanément, avant que l'erreur soit catch et renvoie une RuntimeException
+
+
+=== TournamentTreeBuilder::buildNextRound
+
+image::CFG2.png[]
+
+. E → 49-50 → 51-init → 52-53-54 →  56-57 →59-60 → S
+. E → 49-50 → 51-init →52-53-54 →  56-57 → 62-63-64 → 51-incr → 66 → S
+. E → 49-50 → 51-init → 66 → S
+
+Scénarios de test :
+
+image::testscnearios2.png[]
+
+== 3.6 Qualité des tests (b): couverture du code _bis_
+
+image::secondJacocoReports/screenglobal.png[]
+image::secondJacocoReports/screenparticipant.png[]
+image::secondJacocoReports/screengame.png[]
+image::secondJacocoReports/screentournament.png[]
+image::secondJacocoReports/screentournamenttreebuilder.png[]
+
+Les résultats sont évidemment meilleurs que précédemment. Les quelques cas toujours non couverts concernent des branches inatteignables.
+
+La suite de test semble presque suffisante, mais elle contient encore quelques défauts, et l'analyse de mutation n'a pas encore été réalisée.
+
+
+== 3.7 Qualité des tests (c): analyse de mutation
+
+image::firstPitReport/screenglobal.png[]
+
+Un nombre non négligeable de mutants ont survécu; même si la couverture de mutation est globalement bonne. Il est intéressant de noter que la méthode fonctionnelle et la couverture de code suffisent quasiment entièrement à couvrir les mutations, même si ne sont pas leur objectif initial.
+
+Même si c'est n'est pas absolument nécessaire étant donné le pourcentage déjà élevé de couverture, il est tout de même intéressant d'élargir la suite de test pour couvrir les mutations restantes, car elles concernent des classes essentielles au logiciel.
+
+
+
+== 3.9 Qualité des tests (d): analyse de mutation _bis_
+
+image::secondPitReport/screenglobal.png[]
+
+Les seuls cas restants sont des endroits de code inatteignable, ce qui nous donne une couverture presque totale.
+
+La suite de tests semble suffisante.
+
+== 3.10 Synthèse finale
+
+image::finalsummary.png[]
+
+Pour conclure, ce projet nous a montré plusieurs choses :
+
+* La création de tests doit être rigoureusement appliqués d'après les méthodes définies au préalable, sans quoi les scénarios de tests peuvent rapidement être chaotique et difficilement compréhensibles / réutilisables.
+
+* L'ensemble des méthodes appliquées permettent d'obtenir une suite conséquente de tests, même si c'est laborieux et conséquent. Il y'a presque autant de code pour les tests que pour le logiciel.
+
+* Aucun code n'est digne de confiance absolue, même celui d'un ou plusieurs enseignants.
+
