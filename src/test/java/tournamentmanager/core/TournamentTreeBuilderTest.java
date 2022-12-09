@@ -86,4 +86,43 @@ public class TournamentTreeBuilderTest {
         assertEquals(1, testTournamentTree.get(2).size());
     }
 
+    /*
+    Scénarios de tests pour la méthode buildNextRound en utilisant la méthode structurelles
+     */
+    @Test
+    void buildNextRoundTest1(){
+        TournamentTreeBuilder treeBuilder = new TournamentTreeBuilderImpl();
+        Game g1 = new GameImpl();
+        Game g2 = new GameImpl();
+        ArrayList<Game> games = new ArrayList<>();
+        games.add(g1);
+        games.add(g1);
+        assertThrows(RuntimeException.class, () -> treeBuilder.buildNextRound(games));
+    }
+    @Test
+    void buildNextRoundTest2(){
+        TournamentTreeBuilder treeBuilder = new TournamentTreeBuilderImpl();
+        Game g1 = new GameImpl();
+        Game g2 = new GameImpl();
+        ArrayList<Game> games = new ArrayList<>();
+        List <Game> nextRound = new ArrayList<>();
+        games.add(g1);
+        games.add(g2);
+        nextRound = treeBuilder.buildNextRound(games);
+        assertEquals(1, nextRound.size());
+    }
+    @Test
+    void builNextRoundTest3(){
+        TournamentTreeBuilder treeBuilder = new TournamentTreeBuilderImpl();
+        Game g1 = new GameImpl();
+        Game g2 = new GameImpl();
+        ArrayList<Game> games = new ArrayList<>();
+        List <Game> nextRound = new ArrayList<>();
+        games.add(g1);
+        nextRound = treeBuilder.buildNextRound(games);
+        assertTrue(nextRound.size() == 0);
+    }
+
+
+
 }
