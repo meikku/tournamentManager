@@ -90,7 +90,7 @@ public class TournamentTreeBuilderTest {
     Scénarios de tests pour la méthode buildNextRound en utilisant la méthode structurelles
      */
     @Test
-    void buildNextRoundTest1(){
+    void buildNextRoundTestChemin1(){
         TournamentTreeBuilder treeBuilder = new TournamentTreeBuilderImpl();
         Game g1 = new GameImpl();
         Game g2 = new GameImpl();
@@ -100,7 +100,7 @@ public class TournamentTreeBuilderTest {
         assertThrows(RuntimeException.class, () -> treeBuilder.buildNextRound(games));
     }
     @Test
-    void buildNextRoundTest2(){
+    void buildNextRoundTestChemin2(){
         TournamentTreeBuilder treeBuilder = new TournamentTreeBuilderImpl();
         Game g1 = new GameImpl();
         Game g2 = new GameImpl();
@@ -112,7 +112,7 @@ public class TournamentTreeBuilderTest {
         assertEquals(1, nextRound.size());
     }
     @Test
-    void builNextRoundTest3(){
+    void builNextRoundTestChemin3(){
         TournamentTreeBuilder treeBuilder = new TournamentTreeBuilderImpl();
         Game g1 = new GameImpl();
         Game g2 = new GameImpl();
