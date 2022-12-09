@@ -115,6 +115,72 @@ public class TournamentTreeBuilderTest {
 
     //Structural method test
     @Test
+    void testBuildInitialRoundWorksProperlyWithTwoParticipants(){
+        Participant p1 = new ParticipantImpl("p1");
+        Participant p2 = new ParticipantImpl("p2");
+
+        participants = new ArrayList<>();
+
+        participants.add(p1);
+        participants.add(p2);
+
+        List<Game> res = assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
+        assertTrue(res.size() == 1);
+    }
+
+    //Structural method test
+    @Test
+    void testBuildInitialRoundThrowsErrorWhenThereAreThreePlayers(){
+        Participant p1 = new ParticipantImpl("p1");
+        Participant p2 = new ParticipantImpl("p2");
+        Participant p3 = new ParticipantImpl("p3");
+
+        participants = new ArrayList<>();
+
+        participants.add(p1);
+        participants.add(p2);
+        participants.add(p3);
+
+        assertThrows(RuntimeException.class, () -> ttb.buildInitialRound(participants));
+    }
+
+    //Structural method test
+    @Test
+    void testBuildInitialRoundThrowsErrorWhenThereAreTwoPlayersAndOneIsNull(){
+        Participant p1 = new ParticipantImpl("p1");
+        Participant p2 = null;
+
+        participants = new ArrayList<>();
+
+        participants.add(p1);
+        participants.add(p2);
+
+        assertThrows(RuntimeException.class, () -> ttb.buildInitialRound(participants));
+    }
+
+    //Structural method test
+    @Test
+    void testBuildInitialRoundThrowsErrorWhenThereIsOnePlayer(){
+        Participant p1 = new ParticipantImpl("p1");
+
+        participants = new ArrayList<>();
+
+        participants.add(p1);
+
+        assertThrows(RuntimeException.class, () -> ttb.buildInitialRound(participants));
+    }
+
+    //Structural method test
+    @Test
+    void testBuildInitialRoundThrowsErrorWhenGivenAnEmptyList(){
+        participants = new ArrayList<>();
+
+        List<Game> res = assertDoesNotThrow(() -> ttb.buildInitialRound(participants));
+        assertTrue(res.size() == 0);
+    }
+
+    //Structural method test
+    @Test
     void testBuildNextRoundCreatesEmptyRoundWhenGivenLessThanTwoGames(){
         TournamentTreeBuilder treeBuilder = new TournamentTreeBuilderImpl();
         Game g1 = new GameImpl();
