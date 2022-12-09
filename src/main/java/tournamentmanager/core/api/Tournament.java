@@ -39,7 +39,8 @@ public interface Tournament {
      * @throws TournamentException If the tournament has already started, or if there are strictly less than 2 participants,
      *                             or if the number of participants is not a power of two.
      */
-    void start() throws TournamentException;
+    void start(TournamentTreeBuilder tournamentTreeBuilder) throws TournamentException;
+
 
     /**
      * End the tournament.

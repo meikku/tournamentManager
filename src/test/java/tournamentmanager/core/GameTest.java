@@ -28,39 +28,48 @@ public class GameTest {
     }
 
     //addPoints
+    //Functional method test
     @Test
-    void addPointsProperlyAddsPositiveAmountOfPoints(){
+    void addPointsProperlyAddsPositiveAmountOfPoints() throws TournamentException {
 
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
         assertDoesNotThrow(() -> g.addPoints(p1, 2));
+        assertDoesNotThrow(() -> g.addPoints(p2, 0));
 
         assertEquals(g.getPoints(p1),
                 2);
+
+        assertEquals(g.getPoints(p2),
+                0);
     }
 
+    //Functional method test
     @Test
-    void addPointsThrowsErrorWhenPlayerIsNull(){
+    void addPointsThrowsErrorWhenPlayerIsNull() throws TournamentException {
 
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
         assertThrows(IllegalArgumentException.class,
                 () -> g.addPoints(null, 5) );
+        assertThrows(IllegalArgumentException.class,
+                () -> g.addPoints(null, -5) );
     }
 
+    //Functional method test
     @Test
-    void addPointsProperlyAddsNegativeAmountOfPoints(){
+    void addPointsProperlyAddsNegativeAmountOfPoints() throws TournamentException {
 
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
         assertDoesNotThrow(() -> g.addPoints(p1, -2));
 
@@ -68,26 +77,31 @@ public class GameTest {
                 -2);
     }
 
+    //Functional method test
     @Test
-    void addPointsThrowsErrorWhenGameIsNotInProgress(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
+    void addPointsThrowsErrorWhenGameIsNotInProgress() throws TournamentException {
+        g.addParticipant(p1);
 
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+        g.addParticipant(p2);
 
         assertThrows(TournamentException.class,
                 () -> g.addPoints(p1, 5));
+        assertThrows(TournamentException.class,
+                () -> g.addPoints(p1, -5));
     }
 
     //addParticipant
+    //Functional method test
     @Test
     void addParticipantThrowsIllegalArgumentExceptionWhenParticipantIsNull(){
         assertThrows(IllegalArgumentException.class,
                 () -> g.addParticipant(null));
     }
 
+    //Functional method test
     @Test
-    void addParticipantProperlyAddsParticipantWhenParticipantsListContainsTwoOrLessParticipantsAndParticipantIsNotNull(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
+    void addParticipantProperlyAddsParticipantWhenParticipantsListContainsTwoOrLessParticipantsAndParticipantIsNotNull() throws TournamentException {
+        g.addParticipant(p1);
 
         List<Participant> expected = new ArrayList<>();
         expected.add(p1);
@@ -95,10 +109,11 @@ public class GameTest {
         assertIterableEquals(expected, g.getParticipants());
     }
 
+    //Functional method test
     @Test
-    void addParticipantThrowsTournamentExceptionWhenParticipantsListAlreadyContainsTwoOrMoreParticipants(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void addParticipantThrowsTournamentExceptionWhenParticipantsListAlreadyContainsTwoOrMoreParticipants() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
         Participant p3 = new ParticipantImpl("player3");
 
@@ -107,6 +122,7 @@ public class GameTest {
     }
 
     //addPreviousGame
+    //Functional method test
     @Test
     void addPreviousGameProperlyAddsAPreviousGameWhenItIsNotAlreadyAddedAndPreviousGamesContainsLessThanTwoGames(){
         Game gameToAdd = new GameImpl();
@@ -119,6 +135,7 @@ public class GameTest {
         assertIterableEquals(expected, g.getPreviousGames());
     }
 
+    //Functional method test
     @Test
     void addPreviousGameThrowsTournamentExceptionWhenTheGameToAddHasAlreadyBeenAdded(){
         Game gameToAdd = new GameImpl();
@@ -129,6 +146,7 @@ public class GameTest {
                 () -> g.addPreviousGame(gameToAdd));
     }
 
+    //Functional method test
     @Test
     void addPreviousGameThrowsTournamentExceptionWhenPreviousGamesAlreadyContainsTwoOrMoreGames(){
         Game fillerGame1 = new GameImpl();
@@ -142,6 +160,7 @@ public class GameTest {
                 () -> g.addPreviousGame(gameToAdd));
     }
 
+    //Functional method test
     @Test
     void addPreviousGameThrowsTournamentExceptionWhenGameIsNotStarted(){
         Game gameToAdd = new GameImpl();
@@ -155,6 +174,7 @@ public class GameTest {
                 () -> g.addPreviousGame(gameToAdd));
     }
 
+    //Functional method test
     @Test
     void addPreviousGameThrowsIllegalArgumentExceptionWhenTheGameToAddIsNull(){
         Game gameToAdd = null;
@@ -164,41 +184,44 @@ public class GameTest {
     }
     
     //finish
+    //Functional method test
     @Test
-    void finishThrowsTournamentExceptionWhenScoresAreEven(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void finishThrowsTournamentExceptionWhenScoresAreEven() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
-        assertDoesNotThrow(() -> g.addPoints(p1, 1));
-        assertDoesNotThrow(() -> g.addPoints(p2, 1));
+        g.addPoints(p1, 1);
+        g.addPoints(p2, 1);
 
         assertThrows(TournamentException.class,
                 () -> g.finish());
     }
 
+    //Functional method test
     @Test
-    void finishThrowsTournamentExceptionWhenGameIsNotInProgress(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void finishThrowsTournamentExceptionWhenGameIsNotInProgress() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
         assertThrows(TournamentException.class,
                 () -> g.finish());
     }
 
+    //Functional method test
     @Test
-    void finishProperlyFinishesTheGame(){
+    void finishProperlyFinishesTheGame() throws TournamentException {
         Game followingGame = new GameImpl();
         g.setFollowingGame(followingGame);
 
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
-        assertDoesNotThrow(() -> g.addPoints(p1, 1));
-        assertDoesNotThrow(() -> g.addPoints(p2, 2));
+        g.addPoints(p1, 1);
+        g.addPoints(p2, 2);
 
         assertDoesNotThrow(() -> g.finish());
 
@@ -207,11 +230,12 @@ public class GameTest {
         assertTrue(p1.isEliminated());
     }
 
+    //Functional method test
     //start
     @Test
-    void startThrowsTournamentExceptionWhenTheGameIsInProgressAndThereAreTwoParticipants(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void startThrowsTournamentExceptionWhenTheGameIsInProgressAndThereAreTwoParticipants() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
         assertDoesNotThrow(() -> g.start());
 
@@ -220,18 +244,20 @@ public class GameTest {
 
     }
 
+    //Functional method test
     @Test
-    void startThrowsTournamentExceptionWhenTheGameIsNotStartedAndThereAreLessThanTwoParticipants(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
+    void startThrowsTournamentExceptionWhenTheGameIsNotStartedAndThereAreLessThanTwoParticipants() throws TournamentException {
+        g.addParticipant(p1);
 
         assertThrows(TournamentException.class,
                 () -> g.start());
     }
 
+    //Functional method test
     @Test
-    void startSetsTheGameStatusToInProgressWhenThereAreTwoParticipantsAndTheGameIsNotStarted(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void startSetsTheGameStatusToInProgressWhenThereAreTwoParticipantsAndTheGameIsNotStarted() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
         assertDoesNotThrow(() -> g.start());
 
@@ -239,12 +265,14 @@ public class GameTest {
     }
 
     //setPreviousGame
+    //Functional method test
     @Test
     void setFollowingGameThrowsTournamentExceptionWhenFollowingGameIsNull(){
         assertThrows(IllegalArgumentException.class,
                 () -> g.setFollowingGame(null));
     }
 
+    //Functional method test
     @Test
     void setFollowingGameProperlyAssociatesGameAndFollowingGame(){
         Game followingGameToAdd = new GameImpl();
@@ -257,10 +285,11 @@ public class GameTest {
     }
 
     //getPreviousGames
+    //Functional method test
     @Test
-    void getPreviousGamesContainsExactlyAllPreviousGamesOfCurrentGame(){
+    void getPreviousGamesContainsExactlyAllPreviousGamesOfCurrentGame() throws TournamentException {
         Game previousGameToAdd = new GameImpl();
-        assertDoesNotThrow(() -> g.addPreviousGame(previousGameToAdd));
+        g.addPreviousGame(previousGameToAdd);
 
         List<Game> expected = new ArrayList<>();
         expected.add(previousGameToAdd);
@@ -268,70 +297,71 @@ public class GameTest {
         assertIterableEquals(expected, g.getPreviousGames());
     }
     @Test
+    //Functional method test
     void getPreviousGamesReturnsAnEmptyListWhenThereAreNoPreviousGames(){
         assertIterableEquals(new ArrayList<>(), g.getPreviousGames());
     }
 
     //getWinner
+    //Functional method test
     @Test
-    void getWinnerReturnsTheWinnerOfAGameWhenThereIsAWinnerAndTheGameIsFinished(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void getWinnerReturnsTheWinnerOfAGameWhenThereIsAWinnerAndTheGameIsFinished() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
-        assertDoesNotThrow(() -> g.addPoints(p1, 2));
-        assertDoesNotThrow(() -> g.addPoints(p2, 1));
+        g.addPoints(p1, 2);
+        g.addPoints(p2, 1);
 
-        assertDoesNotThrow(() -> g.finish());
+        g.finish();
 
-        try {
-            assertEquals(p1, g.getWinner());
-        } catch (TournamentException e) {
-            throw new RuntimeException(e);
-        }
+        assertEquals(p1, g.getWinner());
     }
 
+    //Functional method test
     @Test
-    void getWinnerThrowsTournamentExceptionWhenScoresAreNotEvenButTheGameIsNotFinished(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void getWinnerThrowsTournamentExceptionWhenScoresAreNotEvenButTheGameIsNotFinished() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
-        assertDoesNotThrow(() -> g.addPoints(p1, 2));
-        assertDoesNotThrow(() -> g.addPoints(p2, 1));
+        g.addPoints(p1, 2);
+        g.addPoints(p2, 1);
 
         assertThrows(TournamentException.class,
                 () -> g.getWinner());
     }
 
+    //Functional method test
     @Test
-    void getWinnerThrowsTournamentExceptionWhenScoresAreEvenAndTheGameIsNotFinished(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void getWinnerThrowsTournamentExceptionWhenScoresAreEvenAndTheGameIsNotFinished() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
-        assertDoesNotThrow(() -> g.addPoints(p1, 2));
-        assertDoesNotThrow(() -> g.addPoints(p2, 2));
+        g.addPoints(p1, 2);
+        g.addPoints(p2, 2);
 
         assertThrows(TournamentException.class,
                 () -> g.getWinner());
     }
 
     //getLoser
+    //Functional method test
     @Test
-    void getLoserReturnsTheWinnerOfAGameWhenThereIsAWinnerAndTheGameIsFinished(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void getLoserReturnsTheWinnerOfAGameWhenThereIsAWinnerAndTheGameIsFinished() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
-        assertDoesNotThrow(() -> g.addPoints(p1, 2));
-        assertDoesNotThrow(() -> g.addPoints(p2, 1));
+        g.addPoints(p1, 2);
+        g.addPoints(p2, 1);
 
-        assertDoesNotThrow(() -> g.finish());
+        g.finish();
 
         try {
             assertEquals(p2, g.getLoser());
@@ -340,70 +370,74 @@ public class GameTest {
         }
     }
 
+    //Functional method test
     @Test
-    void getLoserThrowsTournamentExceptionWhenScoresAreNotEvenButTheGameIsNotFinished(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void getLoserThrowsTournamentExceptionWhenScoresAreNotEvenButTheGameIsNotFinished() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
-        assertDoesNotThrow(() -> g.addPoints(p1, 2));
-        assertDoesNotThrow(() -> g.addPoints(p2, 1));
+        g.addPoints(p1, 2);
+        g.addPoints(p2, 1);
 
         assertThrows(TournamentException.class,
                 () -> g.getLoser());
     }
 
+    //Functional method test
     @Test
-    void getLoserThrowsTournamentExceptionWhenScoresAreEvenAndTheGameIsNotFinished(){
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+    void getLoserThrowsTournamentExceptionWhenScoresAreEvenAndTheGameIsNotFinished() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
-        assertDoesNotThrow(() -> g.addPoints(p1, 2));
-        assertDoesNotThrow(() -> g.addPoints(p2, 2));
+        g.addPoints(p1, 2);
+        g.addPoints(p2, 2);
 
         assertThrows(TournamentException.class,
                 () -> g.getLoser());
     }
 
     //getStatus
+    //Functional method test
     @Test
-    void getStatusReturnsTheStatusOfTheGame(){
+    void getStatusReturnsTheStatusOfTheGame() throws TournamentException {
         assertEquals(Status.NOTSTARTED, g.getStatus());
 
-        assertDoesNotThrow(() -> g.addParticipant(p1));
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+        g.addParticipant(p1);
+        g.addParticipant(p2);
 
-        assertDoesNotThrow(() -> g.start());
+        g.start();
 
         assertEquals(Status.INPROGRESS, g.getStatus());
 
-        assertDoesNotThrow(() -> g.addPoints(p1, 2));
-        assertDoesNotThrow(() -> g.addPoints(p2, 1));
+        g.addPoints(p1, 2);
+        g.addPoints(p2, 1);
 
-        assertDoesNotThrow(() -> g.finish());
+        g.finish();
 
         assertEquals(Status.FINISHED, g.getStatus());
     }
 
     //getStatus
+    //Functional method test
     @Test
-    void getParticipantsReturnsExactlyAllTheParticipantsOfTheGame(){
+    void getParticipantsReturnsExactlyAllTheParticipantsOfTheGame() throws TournamentException {
         List<Participant> expected = new ArrayList<>();
 
         // compares the content of arrays which are not necessarily ordered in the same way but should contain the same elements
         assertTrue(expected.containsAll(g.getParticipants()) && expected.size() == g.getParticipants().size());
         assertTrue(g.getParticipants().size() <= 2);
 
-        assertDoesNotThrow(() -> g.addParticipant(p1));
+        g.addParticipant(p1);
         expected.add(p1);
 
         assertTrue(expected.containsAll(g.getParticipants()) && expected.size() == g.getParticipants().size());
         assertTrue(g.getParticipants().size() <= 2);
 
-        assertDoesNotThrow(() -> g.addParticipant(p2));
+        g.addParticipant(p2);
         expected.add(p2);
 
         assertTrue(expected.containsAll(g.getParticipants()) && expected.size() == g.getParticipants().size());
@@ -412,6 +446,7 @@ public class GameTest {
     }
 
     //getFollowingGame
+    //Functional method test
     @Test
     void getFollowingGameReturnsAnEmptyOptionalIfThereIsNoFollowingGame(){
         Optional<Game> expected = Optional.empty();
@@ -419,6 +454,7 @@ public class GameTest {
         assertEquals(expected, g.getFollowingGame());
     }
 
+    //Functional method test
     @Test
     void getFollowingGameReturnsTheFollowingGame(){
         Game followingGameToAdd = new GameImpl();

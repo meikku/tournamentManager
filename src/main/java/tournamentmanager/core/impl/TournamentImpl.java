@@ -25,9 +25,8 @@ public class TournamentImpl implements Tournament {
         }
     }
 
-
     @Override
-    public void start() throws TournamentException {
+    public void start(TournamentTreeBuilder ttb) throws TournamentException {
         if (this.getStatus() != Status.NOTSTARTED) {
             throw new TournamentException("Cannot start a tournament that has already started.");
         } else if (this.participants.size() < 2) {
@@ -37,13 +36,14 @@ public class TournamentImpl implements Tournament {
         }
 
         // Build tournament tree
-        TournamentTreeBuilder builder = new TournamentTreeBuilderImpl();
+        TournamentTreeBuilder builder = ttb;
         Collections.shuffle(this.participants);
         this.rounds = builder.buildAllRounds(Collections.unmodifiableList(this.participants));
 
         // Set status
         this.status = Status.INPROGRESS;
     }
+
 
     @Override
     public void end() throws TournamentException {
@@ -149,6 +149,5 @@ public class TournamentImpl implements Tournament {
     public Status getStatus() {
         return this.status;
     }
-
 
 }

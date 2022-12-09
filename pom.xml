@@ -14,6 +14,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <junit.jupiter.version>5.6.0</junit.jupiter.version>
+        <jacoco.version>0.8.5</jacoco.version>
     </properties>
 
     <dependencies>
@@ -32,6 +33,31 @@
     </dependencies>
     <build>
         <plugins>
+         <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+                <executions>
+
+                    <!-- Active l'agent JaCoCo -->
+                    <execution>
+                        <id>prepare-agent-exe</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                     <!-- Génère un rapport HTML -->
+                    <execution>
+                        <id>report-exe</id>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+        </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
@@ -42,9 +68,26 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
             </plugin>
+            
         </plugins>
 
     </build>
+    
+    <reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
 
 
 </project>
