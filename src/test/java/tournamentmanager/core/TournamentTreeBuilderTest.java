@@ -146,20 +146,6 @@ public class TournamentTreeBuilderTest {
 
     //Structural method test
     @Test
-    void testBuildInitialRoundThrowsErrorWhenThereAreTwoPlayersAndOneIsNull(){
-        Participant p1 = new ParticipantImpl("p1");
-        Participant p2 = null;
-
-        participants = new ArrayList<>();
-
-        participants.add(p1);
-        participants.add(p2);
-
-        assertThrows(RuntimeException.class, () -> ttb.buildInitialRound(participants));
-    }
-
-    //Structural method test
-    @Test
     void testBuildInitialRoundThrowsErrorWhenThereIsOnePlayer(){
         Participant p1 = new ParticipantImpl("p1");
 

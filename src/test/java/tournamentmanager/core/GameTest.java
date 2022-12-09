@@ -464,4 +464,17 @@ public class GameTest {
 
         assertEquals(expected, g.getFollowingGame());
     }
+
+    //Functional method test
+    @Test
+    void addPointsThrowsErrorWhenParticipantDoesNotBelongToGame() throws TournamentException {
+        g.addParticipant(p1);
+        g.addParticipant(p2);
+
+        g.start();
+
+        Participant impostor = new ParticipantImpl("impostor");
+
+        assertThrows(IllegalArgumentException.class, () -> g.addPoints(impostor, 3));
+    }
 }
