@@ -182,7 +182,9 @@ Pour conclure, ce projet nous a montré plusieurs choses :
 
 * La création de tests doit être rigoureusement appliqués d'après les méthodes définies au préalable, sans quoi les scénarios de tests peuvent rapidement être chaotique et difficilement compréhensibles / réutilisables.
 
-* L'ensemble des méthodes appliquées permettent d'obtenir une suite conséquente de tests, même si c'est laborieux et conséquent. Il y'a presque autant de code pour les tests que pour le logiciel.
+* L'ensemble des méthodes appliquées permettent d'obtenir une suite conséquente de tests, même si c'est laborieux. Il y'a presque autant de code pour les tests que pour le logiciel.
 
-* Aucun code n'est digne de confiance absolue, même celui d'un ou plusieurs enseignants.
+* Même si ce n'était peut-être pas le plus simple, le projet a été réalisé entièrement sans doublure de tests, même lorsque cela était possible.
+
+* Aucun code n'est digne de confiance absolue.
 

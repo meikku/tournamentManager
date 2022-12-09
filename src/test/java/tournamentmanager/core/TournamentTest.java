@@ -254,79 +254,51 @@ public class TournamentTest {
 	// getFinishedGames()
 	//Functional method test
 	@Test
-    public void testGetFinishedGames(){
-		TournamentTreeBuilder fakeTtb = mock(TournamentTreeBuilder.class);
-		List<List<Game>> returnList = new ArrayList<>();
-		List<Participant> participantsList = new ArrayList<>();
-		participantsList.add(p1);
-		participantsList.add(p2);
+    public void testGetFinishedGames() throws TournamentException {
+		t.addParticipant(p1);
+		t.addParticipant(p2);
+		t.addParticipant(p3);
+		t.addParticipant(p4);
 
-		List<Participant> participantsListReversed = new ArrayList<>();
-		participantsListReversed.add(p2);
-		participantsListReversed.add(p1);
+		t.start(new TournamentTreeBuilderImpl());
 
-		Game fakeGame = mock(Game.class);
-		when(fakeGame.getStatus()).thenReturn(Status.FINISHED);
+		Game expectedFinishedGame = t.getRounds().get(0).get(0);
+		Game expectedInProgressGame = t.getRounds().get(0).get(1);
+		Game gameWaitingForSecondParticipant = t.getRounds().get(1).get(0);
 
-		List<Game> fakeRound = new ArrayList<>();
-		fakeRound.add(fakeGame);
-		returnList.add(fakeRound);
+		expectedFinishedGame.start();
+		expectedFinishedGame.addPoints(expectedFinishedGame.getParticipants().get(0), 2);
+		expectedFinishedGame.finish();
 
-		when(fakeTtb.buildAllRounds(participantsList)).thenReturn(returnList);
-		//This is a bad hotfix, this test method should be changed soon!
-		when(fakeTtb.buildAllRounds(participantsListReversed)).thenReturn(returnList);
-		
-		assertDoesNotThrow(() -> t.addParticipant(p1));
-		assertDoesNotThrow(() -> t.addParticipant(p2));
+		expectedInProgressGame.start();
 
-		assertDoesNotThrow(() -> t.start(fakeTtb));
-		assertDoesNotThrow(() -> t.end());
-		
-		assertTrue(t.getFinishedGames().containsAll(fakeRound));
-		assertTrue(fakeRound.containsAll(t.getFinishedGames()));
-    }
-    /*
-    test la liste de games n'est pas vide et tous les games ont le status NOTSTARTED
-     */
-    @Test
-    public void testGetFutureGames1(){
-
-
+		assertTrue(t.getFinishedGames().contains(expectedFinishedGame));
+		assertEquals(1, t.getGamesInProgress().size());
     }
 
 	// getGamesInProgress()
 	//Functional method test
 	@Test
-	void testGetGamesInProgressRetrivesGamesInProgress() {
-		TournamentTreeBuilder fakeTtb = mock(TournamentTreeBuilder.class);
+	void testGetGamesInProgressRetrivesGamesInProgress() throws TournamentException {
+		t.addParticipant(p1);
+		t.addParticipant(p2);
+		t.addParticipant(p3);
+		t.addParticipant(p4);
 
-		List<List<Game>> returnList = new ArrayList<>();
-		List<Participant> participantsList = new ArrayList<>();
-		participantsList.add(p1);
-		participantsList.add(p2);
+		t.start(new TournamentTreeBuilderImpl());
 
-		List<Participant> participantsListReversed = new ArrayList<>();
-		participantsListReversed.add(p2);
-		participantsListReversed.add(p1);
+		Game gameToStart = t.getRounds().get(0).get(0);
+		Game expectedInProgressGame = t.getRounds().get(0).get(1);
+		Game gameWaitingForSecondParticipant = t.getRounds().get(1).get(0);
 
-		Game fakeGame = mock(Game.class);
-		when(fakeGame.getStatus()).thenReturn(Status.INPROGRESS);
+		gameToStart.start();
+		gameToStart.addPoints(gameToStart.getParticipants().get(0), 2);
+		gameToStart.finish();
 
-		List<Game> fakeRound = new ArrayList<>();
-		fakeRound.add(fakeGame);
-		returnList.add(fakeRound);
+		expectedInProgressGame.start();
 
-		when(fakeTtb.buildAllRounds(participantsList)).thenReturn(returnList);
-		//This is a bad hotfix, this test method should be changed soon!
-		when(fakeTtb.buildAllRounds(participantsListReversed)).thenReturn(returnList);
-
-		assertDoesNotThrow(() -> t.addParticipant(p1));
-		assertDoesNotThrow(() -> t.addParticipant(p2));
-
-		assertDoesNotThrow(() -> t.start(fakeTtb));
-
-		assertTrue(t.getGamesInProgress().containsAll(fakeRound));
-		assertTrue(fakeRound.containsAll(t.getGamesInProgress()));
+		assertTrue(t.getGamesInProgress().contains(expectedInProgressGame));
+		assertTrue(t.getGamesInProgress().size() == 1);
 	}
 
 	// getFutureGames()
@@ -348,8 +320,9 @@ public class TournamentTest {
 		gameToStart.addPoints(gameToStart.getParticipants().get(0), 2);
 		gameToStart.finish();
 
+		assertTrue(t.getFutureGames().contains(expectedReadyToStartGame));
 		assertTrue(t.getFutureGames().contains(gameWaitingForSecondParticipant));
-		assertTrue(t.getGamesReadyToStart().size() == 1);
+		assertEquals(2, t.getFutureGames().size());
 	}
 	
 	// computeFinalRankings()
