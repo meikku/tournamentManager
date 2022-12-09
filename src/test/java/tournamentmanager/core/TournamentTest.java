@@ -130,6 +130,14 @@ public class TournamentTest {
             t.start();
         });
     }
+    /*
+    test la liste de games n'est pas vide et tous les games ont le status NOTSTARTED
+     */
+    @Test
+    public void testGetFutureGames1(){
+
+
+    }
 
 
 }
